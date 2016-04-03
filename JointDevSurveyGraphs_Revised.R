@@ -10,7 +10,7 @@ library(ggplot2)  # to produce graphics
 library(dplyr)    # for data management
 library(plyr)     # for data management
 library(tidyr)    # for data management
-
+library(scales)   # for percent format in y-axis
 ################################################################################
 #     OPEN FILES AND LOAD DATA
 ################################################################################
@@ -174,6 +174,7 @@ for(i in seq_along(questionsNumber)){
             labs(y= "Percent of Responses", x= "Score") +
             #facet_grid(Program ~ .) +
             scale_x_continuous(limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
+            scale_y_continuous( labels = percent_format())+
 #             scale_y_continuous(limits = c(0,maxheight), 
 #                                breaks = seq(0, floor(maxheight), 1)) +
             scale_fill_brewer(palette = "Accent") +
@@ -185,14 +186,16 @@ for(i in seq_along(questionsNumber)){
                   legend.position="right")
     }
     else{
-        ggplot(oneQdata, aes(x=Score, y = Weight, fill = Program)) +
-            geom_bar(stat = "identity") +
-            labs(y= "Frequency", x= "Score") +
-            facet_grid(Program ~ SubTitle) +
+        ggplot(oneQdata, aes(x=Score, y = Percent, fill = Program, color=Program)) +
+            geom_area(alpha=0.5, position = "identity") +
+            labs(y= "Percent of Responses", x= "Score") +
+            facet_grid(. ~ SubTitle) +
             scale_x_continuous(limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
-            scale_y_continuous(limits = c(0,maxheight), 
-                               breaks = seq(0, floor(maxheight), 1)) +
+            scale_y_continuous( labels = percent_format())+
+        # scale_y_continuous(limits = c(0,maxheight), 
+                               # breaks = seq(0, floor(maxheight), 1)) +
             scale_fill_brewer(palette = "Accent") +
+            scale_color_brewer(palette = "Accent") +
             ggtitle(questionTitle2[i]) +
             theme(plot.title=element_text(size = rel(1), face = "bold")) +
             theme(#strip.text = element_blank(), 
