@@ -64,14 +64,34 @@ SurveySummary<-ddply(SurveyData,
       Weight=sum(Weight)
 )
 
+ZeroSurveySummary<-expand.grid(Characteristic=unique(SurveySummary$Characteristic),
+                               Program=unique(SurveySummary$Program),
+                               Score=1:6)
+ZeroSurveySummary$Weight<-0 
+
+SurveySummary<-ddply(rbind(SurveySummary,ZeroSurveySummary), 
+                     .(Characteristic,Score,Program),
+                     .fun=summarise,
+                     Weight=sum(Weight)
+)
+
+SurveySummary<-ddply(SurveySummary, 
+                     .(Characteristic,Program),
+                     .fun=mutate,
+                     Percent=Weight/sum(Weight)
+)
+
 SurveySummary$CharacteristicNumber<-substring(SurveySummary$Characteristic,1,1)
 SurveySummary$CharacteristicLetter<-substring(SurveySummary$Characteristic,2,2)
 SurveySummary$CharacteristicLetter[SurveySummary$CharacteristicLetter==""]<-NA
 
 SurveySummary<-join(SurveySummary,questions,by="Characteristic")
 
+SurveySummary[order(SurveySummary$Program,SurveySummary$Characteristic,SurveySummary$Score),]
+
 # questions <- dist(SurveySummary$Characteristic)
 questionsNumber <- unique(SurveySummary$CharacteristicNumber)
+
 
 
 
@@ -149,14 +169,15 @@ for(i in seq_along(questionsNumber)){
     oneQdata <- filter(SurveySummary, CharacteristicNumber == questionsNumber[i])
     
     if(any(is.na(oneQdata$CharacteristicLetter))){
-        ggplot(oneQdata, aes(x=Score, y= Weight, color = Program, fill=Program)) + # y = Weight,
-            geom_line(alpha=0.5) +#stat = "identity"
-            labs(y= "Frequency", x= "Score") +
+        ggplot(oneQdata, aes(x=Score, y= Percent,  fill=Program, color=Program)) + # y = Weight,
+            geom_area(alpha=0.5, position = "identity") +#stat = "identity"
+            labs(y= "Percent of Responses", x= "Score") +
             #facet_grid(Program ~ .) +
             scale_x_continuous(limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
-            scale_y_continuous(limits = c(0,maxheight), 
-                               breaks = seq(0, floor(maxheight), 1)) +
+#             scale_y_continuous(limits = c(0,maxheight), 
+#                                breaks = seq(0, floor(maxheight), 1)) +
             scale_fill_brewer(palette = "Accent") +
+            scale_color_brewer(palette = "Accent") +
             ggtitle(questionTitle2[i]) +
             theme(plot.title=element_text(size = rel(1), face = "bold")) +
             theme(strip.text = element_blank(), 
