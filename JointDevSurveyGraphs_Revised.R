@@ -12,6 +12,10 @@ library(dplyr)    # for data management
 library(plyr)     # for data management
 library(tidyr)    # for data management
 library(scales)   # for percent format in y-axis
+
+options(error=recover)
+options(warn=1)
+
 ################################################################################
 #     OPEN FILES AND LOAD DATA
 ################################################################################
@@ -26,11 +30,11 @@ originalwd <- getwd()
 setwd("K:/Development/JointDevelopment")
 
 JSF <- data.table(read.xlsx2("./Surveys/Response MatrixJSF.xlsx", 
-                  sheetName = "Sheet2"))
+                             sheetName = "Sheet2"))
 M777 <- data.table(read.xlsx2("./Surveys/Response MatrixM777.xlsx", 
-                  sheetName = "Sheet2"))
+                              sheetName = "Sheet2"))
 AGS <- data.table(read.xlsx2("./Surveys/Response MatrixAGS.xlsx", 
-                  sheetName = "Sheet2"))
+                             sheetName = "Sheet2"))
 
 # fixes numeric data that got imported as factors 
 # ignore the NA warning, NAs are being correctly recognized now, not introduced
@@ -63,9 +67,9 @@ questions$SubTitle <- gsub("\\\\n","\n",questions$SubTitle)
 ################################################################################
 
 SurveySummary<-ddply(SurveyData, 
-      .(Characteristic,Score,Program),
-      .fun=summarise,
-      Weight=sum(Weight)
+                     .(Characteristic,Score,Program),
+                     .fun=summarise,
+                     Weight=sum(Weight)
 )
 
 ZeroSurveySummary<-expand.grid(Characteristic=unique(SurveySummary$Characteristic),
@@ -85,6 +89,9 @@ SurveySummary<-ddply(SurveySummary,
                      Percent=Weight/sum(Weight,na.rm=TRUE) #JSF has some missing responses
 )
 
+
+
+
 SurveySummary$CharacteristicNumber<-substring(SurveySummary$Characteristic,1,1)
 SurveySummary$CharacteristicLetter<-substring(SurveySummary$Characteristic,2,2)
 SurveySummary$CharacteristicLetter[SurveySummary$CharacteristicLetter==""]<-NA
@@ -98,6 +105,7 @@ SurveyLevels$CharacteristicLetter[SurveyLevels$CharacteristicLetter==""]<-NA
 SurveySummary<-join(SurveySummary,questions,by="Characteristic")
 
 SurveySummary[order(SurveySummary$Program,SurveySummary$Characteristic,SurveySummary$Score),]
+SurveyLevels[order(SurveyLevels$Characteristic,SurveyLevels$Score),]
 
 # questions <- dist(SurveySummary$Characteristic)
 questionsNumber <- unique(SurveySummary$CharacteristicNumber)
@@ -119,7 +127,7 @@ questionsNumber <- unique(SurveySummary$CharacteristicNumber)
 # SurveySummary$SubTitle[SurveySummary$Characteristic=="8b"]<-  "By Political or\nIndustrial Goals"
 
 
-questionTitle2 <- c("Figure 1.  Integration",
+questionTitle <- c("Figure 1.  Integration",
                    "Figure 2. Number of\nParticipating Countries",
                    "Figure 3. Decision Making",
                    "Figure 4. Commitment",
@@ -128,7 +136,7 @@ questionTitle2 <- c("Figure 1.  Integration",
                    "Figure 7. Tradeoff Between\nLeading-Edge Technology and Cost",
                    "Figure 8. Workshare Distribution"
                    
-                   )
+)
 
 
 # Find the maximum total weight for any one combination of score, program, and
@@ -139,7 +147,7 @@ questionTitle2 <- c("Figure 1.  Integration",
 # B) All data fits on the graphs
 
 weightsum <- with(SurveySummary, aggregate(Weight ~ Program + Score +
-                                              Characteristic, FUN = sum))
+                                               Characteristic, FUN = sum))
 maxheight <- max(weightsum$Weight)
 
 ################################################################################
@@ -177,20 +185,22 @@ maxheight <- max(weightsum$Weight)
 for(i in seq_along(questionsNumber)){
     
     oneQdata <- filter(SurveySummary, CharacteristicNumber == questionsNumber[i])
-    oneqlabels <- filter(SurveyLevels, CharacteristicNumber == questionsNumber[i])
+    oneQlabels <- filter(SurveySummary, CharacteristicNumber == questionsNumber[i])
     
     if(any(is.na(oneQdata$CharacteristicLetter))){
         ggplot(oneQdata, aes(x=Score, y= Percent,  fill=Program, color=Program)) + # y = Weight,
             geom_area(alpha=0.5, position = "identity") +#stat = "identity"
             labs(y= "Percent of Responses") + #, x= "Score"
             #facet_grid(Program ~ .) +
-            scale_x_continuous(limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6),  labels=oneqlabels$Level) +
+            scale_x_continuous( breaks=c(1:nrow(oneQlabels)),
+                                limits = c(0.5,6.5),
+                                labels=paste(oneQlabels$Score,oneQlabels$Level,sep="-"))+
             scale_y_continuous( labels = percent_format())+
-#             scale_y_continuous(limits = c(0,maxheight), 
-#                                breaks = seq(0, floor(maxheight), 1)) +
+            #             scale_y_continuous(limits = c(0,maxheight), 
+            #                                breaks = seq(0, floor(maxheight), 1)) +
             scale_fill_brewer(palette = "Accent") +
             scale_color_brewer(palette = "Accent") +
-            ggtitle(questionTitle2[i]) +
+            ggtitle(questionTitle[i]) +
             theme(plot.title=element_text(size = rel(1), face = "bold")) +
             theme(axis.text.x=element_text(angle=45,
                                            size=7,
@@ -201,26 +211,39 @@ for(i in seq_along(questionsNumber)){
                   axis.title.x=element_blank(),
                   legend.text=element_text(size=8),
                   legend.margin=unit(-0.8,"cm"),
-                  # plot.margin = unit(x = c(-5, 0, 0, 0), units = "mm"),
+                  legend.key.size=unit(0.25,"cm"),
                   legend.position="bottom")
     }
     else{
+        #This is a trick to allow each of the multiple part questions to have a different score
+        #1-6 for a, 7-12 for b, and 13-18 for c
+        oneQdata$Score[oneQdata$CharacteristicLetter=="b"]<-oneQdata$Score[oneQdata$CharacteristicLetter=="b"]+6
+        oneQdata$Score[oneQdata$CharacteristicLetter=="c"]<-oneQdata$Score[oneQdata$CharacteristicLetter=="c"]+12
         ggplot(oneQdata, aes(x=Score, y = Percent, fill = Program, color=Program)) +
             geom_area(alpha=0.5, position = "identity") +
             labs(y= "Percent of Responses") + #, x= "Score"
-            facet_grid(. ~ SubTitle) +
-            scale_x_continuous(limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
+            scale_x_continuous(breaks=c(1:nrow(oneQlabels)),
+                               labels=paste(oneQlabels$Score,oneQlabels$Level,sep="-"))+#limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
+            facet_grid(. ~ SubTitle, scales="free_x") +
             scale_y_continuous( labels = percent_format())+
-        # scale_y_continuous(limits = c(0,maxheight), 
-                               # breaks = seq(0, floor(maxheight), 1)) +
+            # scale_y_continuous(limits = c(0,maxheight), 
+            # breaks = seq(0, floor(maxheight), 1)) +
             scale_fill_brewer(palette = "Accent") +
             scale_color_brewer(palette = "Accent") +
-            ggtitle(questionTitle2[i]) +
+            ggtitle(questionTitle[i]) +
             theme(plot.title=element_text(size = rel(1), face = "bold")) +
+            theme(axis.text.x=element_text(angle=45,
+                                           size=7,
+                                           vjust = 1, 
+                                           hjust=1))+ #size=axis.text.
+            
             theme(#strip.text = element_blank(), 
-                  #strip.background = element_blank(),
+                #strip.background = element_blank(),
                 axis.title.x=element_blank(),
-                  legend.position="bottom")
+                legend.text=element_text(size=8),
+                legend.margin=unit(-0.8,"cm"),
+                legend.key.size=unit(0.25,"cm"),
+                legend.position="bottom")
     }
     # CHANGE SAVE LOCATION HERE
     filepath <- paste("K:/Development/JointDevelopment/FinalGraphs/",
@@ -231,6 +254,106 @@ for(i in seq_along(questionsNumber)){
     ggsave(filepath, width = graphwidth, height = 3, unit="in", dpi = 300)      
 }
 
+
+
+SurveyData$CharacteristicNumber<-substring(SurveyData$Characteristic,1,1)
+SurveyData$CharacteristicLetter<-substring(SurveyData$Characteristic,2,2)
+SurveyData$CharacteristicLetter[SurveyData$CharacteristicLetter==""]<-NA
+
+# SurveyData<-ddply(SurveyData, 
+#                      .(Characteristic,Program),
+#                      .fun=mutate,
+#                      Percent=Weight/sum(Weight,na.rm=TRUE) #JSF has some missing responses
+# )
+
+SurveySumcheck<-ddply(SurveyData, 
+                      .(Characteristic,Program,Stakeholder),
+                      .fun=summarise,
+                      Weight=sum(Weight,na.rm = TRUE)
+)
+subset(SurveySumcheck,is.na(Weight)|abs(Weight-1)>0.02)
+
+
+
+for(i in c(3,7,8)){
+    
+    oneQdataA <- filter(SurveyData, CharacteristicNumber == i  &CharacteristicLetter=='a')
+    oneQdataB <- filter(SurveyData, CharacteristicNumber == i  &CharacteristicLetter=='b')
+    oneQdataA <- subset(oneQdataA , select=-c(Characteristic,CharacteristicLetter))
+    oneQdataB <- subset(oneQdataB , select=-c(Characteristic,CharacteristicLetter))
+    oneQdataA<-rename(oneQdataA, c("Score"="ScoreA"))
+    oneQdataB<-rename(oneQdataB, c("Score"="ScoreB"))
+    if(nrow(oneQdataA)!=nrow(oneQdataB)) stop("Number of entries is not aligned between surveys")
+    oneQdata<-full_join(oneQdataA,oneQdataB)
+    oneQdata<-oneQdata[complete.cases(oneQdata),]
+    
+    oneQdata<-ddply(oneQdata, 
+                    .(CharacteristicNumber,ScoreA,ScoreB,Program),
+                    .fun=summarise,
+                    Weight=sum(Weight)
+    )
+    
+    
+    oneQdata<-ddply(oneQdata, 
+                    .(CharacteristicNumber,Program),
+                    .fun=mutate,
+                    Percent=Weight/sum(Weight,na.rm=TRUE) #JSF has some missing responses
+    )
+    
+    oneQlabelsA <- filter(SurveyLevels, CharacteristicNumber == i &CharacteristicLetter=='a')
+    oneQlabelsB <- filter(SurveyLevels, CharacteristicNumber == i &CharacteristicLetter=='b')
+    
+    
+    
+    ggplot(oneQdata, aes(x=ScoreA, y = ScoreB, size = Percent, color=Program)) +
+        geom_point() +
+        scale_size_area(labels = percent_format())+
+        labs(x= gsub("\n"," ",filter(questions, substring(questions$Characteristic,1,1) == i  &
+                           substring(questions$Characteristic,2,2)=='a')$SubTitle),
+             y= gsub("\n"," ",filter(questions, substring(questions$Characteristic,1,1)== i  &
+                            substring(questions$Characteristic,2,2)=='b')$SubTitle)) +
+    scale_x_continuous(breaks=c(1:nrow(oneQlabelsA)),
+                       limits = c(0.5,6.5),
+                       labels=paste(oneQlabelsA$Score,oneQlabelsA$Level,sep="-"))+#limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
+        facet_grid(. ~ Program) +
+        scale_y_continuous(breaks=c(1:nrow(oneQlabelsB)),
+                           limits = c(0.5,6.5),
+                           labels=paste(oneQlabelsB$Score,oneQlabelsB$Level,sep="-"))+#limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
+        # scale_y_continuous(limits = c(0,maxheight), 
+        # breaks = seq(0, floor(maxheight), 1)) +
+        scale_fill_brewer(palette = "Accent") +
+        scale_color_brewer(palette = "Accent") +
+        ggtitle(gsub("\n"," ",questionTitle[i])) +
+        theme(plot.title=element_text(size = rel(1), face = "bold")) +
+        theme(axis.text.x=element_text(angle=45,
+                                       size=7,
+                                       vjust = 1, 
+                                       hjust=1))+ #size=axis.text.
+        theme(axis.text.y=element_text(angle=45,
+                                       size=7,
+                                       vjust = 1, 
+                                       hjust=1))+ #size=axis.text.
+        guides(color=FALSE)+
+        theme(axis.title.x=element_text(size=8),
+              axis.title.y=element_text(size=8))+
+        theme(#strip.text = element_blank(), 
+            #strip.background = element_blank(),
+            # axis.title.x=element_blank(),
+            # axis.title.y=element_blank(),
+            legend.text=element_text(size=8),
+            legend.margin=unit(-0.5,"cm"),
+            plot.margin=unit(c(0,0,0,0),"cm"),
+            legend.key.size=unit(0.1,"cm"),
+            legend.position="right")
+    
+    # CHANGE SAVE LOCATION HERE
+    filepath <- paste("K:/Development/JointDevelopment/FinalGraphs/",
+                      "q",i,"scatter.png",sep = "")
+    
+    graphwidth<-6
+    # CHANGE GRAPH SIZE AND RESOLUTION HERE            
+    ggsave(filepath, width = graphwidth, height = 3, unit="in", dpi = 300)      
+}
 
 
 # cleanup: return to original working directory
