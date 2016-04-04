@@ -5,7 +5,7 @@ Characteristic,Score,FullLevel,Level,Detailed
 2,4,Influenced More\nOften than Not,Influenced more\noften than not,
 2,5,Often Influenced\nDecision Making,Often influenced\ndecision making,
 2,6,Always Influenced,Always influenced,The number of countries participating in the program never influenced decision making throughout the life of the program 
-4,1,There were no explicit measures\nto prevent defection from the outset,No explicit measuresto prevent\ndefection from the outset,There were no explicit measures to prevent defection from the outset
+4,1,There were no explicit measures\nto prevent defection from the outset,No explicit measures to\nprevent defection from the outset,There were no explicit measures to prevent defection from the outset
 4,2,No Explicit Measures but\nPossibility to Create Them,No explicit measures but possibility\nto create them,
 4,3,Minor Incentives to\nPrevent Defection,Minor Incentives to prevent\ndefection,
 4,4,Measures that can be\nEasily Incurred,Measures that can be easily\nincurred,
@@ -60,6 +60,7 @@ Characteristic,Score,FullLevel,Level,Detailed
 7a,5,Mostly Based on Demand for\nLeading-Edge Tech,Mostly based on dem. for l.e. tech,
 7a,6,Entirely Based on Demand for\nLeading-edge Tech.,Entirely based on dem. for l.e. tech.,"1a.   On a scale of one to six, evaluate the extent to which the mission of the NATO AGS program was based on the demand for developing low-cost economies of scale, where "
 7b,1,Not Based on Demand for\nEconomies of Scale,Not based on dem. for econ. of scale,Program mission completely not based on demand for low-cost economies of scale and
+7b,2,Slightly Based on Demand\nfor Economies of Scale,Slightly based on dem. for econ. of scale,
 7b,3,Moderately Based on Demand\nfor Economies of Scale,Moderately based on dem. for econ. of scale,
 7b,4,Equally Based on Demand\nfor Economies of Scale,Half based on dem. for econ. of scale,
 7b,5,Mostly Based on Demand\nfor Economies of Scale,Mostly based on dem. for econ. of scale,
