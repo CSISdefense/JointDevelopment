@@ -185,7 +185,7 @@ maxheight <- max(weightsum$Weight)
 for(i in seq_along(questionsNumber)){
     
     oneQdata <- filter(SurveySummary, CharacteristicNumber == questionsNumber[i])
-    oneQlabels <- filter(SurveySummary, CharacteristicNumber == questionsNumber[i])
+    oneQlabels <- filter(SurveyLevels, CharacteristicNumber == questionsNumber[i])
     
     if(any(is.na(oneQdata$CharacteristicLetter))){
         ggplot(oneQdata, aes(x=Score, y= Percent,  fill=Program, color=Program)) + # y = Weight,
@@ -205,11 +205,15 @@ for(i in seq_along(questionsNumber)){
             theme(axis.text.x=element_text(angle=45,
                                            size=7,
                                            vjust = 1, 
-                                           hjust=1))+ #size=axis.text.
+                                           hjust=1),
+                  axis.text.y=element_text(size=7),
+                  axis.title.x=element_text(size=8),
+                  axis.title.y=element_text(size=8))+ #size=axis.text.
             theme(strip.text = element_blank(), 
                   strip.background = element_blank(),
                   axis.title.x=element_blank(),
                   legend.text=element_text(size=8),
+                  plot.margin=unit(c(0,0.25,0.25,0.5),"cm"),
                   legend.margin=unit(-0.8,"cm"),
                   legend.key.size=unit(0.25,"cm"),
                   legend.position="bottom")
@@ -235,12 +239,16 @@ for(i in seq_along(questionsNumber)){
             theme(axis.text.x=element_text(angle=45,
                                            size=7,
                                            vjust = 1, 
-                                           hjust=1))+ #size=axis.text.
+                                           hjust=1),
+                  axis.text.y=element_text(size=7),
+                  axis.title.x=element_text(size=8),
+                  axis.title.y=element_text(size=8))+ #size=axis.text.
             
             theme(#strip.text = element_blank(), 
                 #strip.background = element_blank(),
                 axis.title.x=element_blank(),
                 legend.text=element_text(size=8),
+                plot.margin=unit(c(0,0.5,0.25,0),"cm"),
                 legend.margin=unit(-0.8,"cm"),
                 legend.key.size=unit(0.25,"cm"),
                 legend.position="bottom")
@@ -323,7 +331,7 @@ for(i in c(3,7,8)){
         # breaks = seq(0, floor(maxheight), 1)) +
         scale_fill_brewer(palette = "Accent") +
         scale_color_brewer(palette = "Accent") +
-        ggtitle(gsub("\n"," ",questionTitle[i])) +
+        ggtitle(questionTitle[i]) +
         theme(plot.title=element_text(size = rel(1), face = "bold")) +
         theme(axis.text.x=element_text(angle=45,
                                        size=7,
@@ -335,7 +343,9 @@ for(i in c(3,7,8)){
                                        hjust=1))+ #size=axis.text.
         guides(color=FALSE)+
         theme(axis.title.x=element_text(size=8),
-              axis.title.y=element_text(size=8))+
+              axis.title.y=element_text(size=8)
+              # plot.title=element_text(hjust=0)
+              )+
         theme(#strip.text = element_blank(), 
             #strip.background = element_blank(),
             # axis.title.x=element_blank(),
