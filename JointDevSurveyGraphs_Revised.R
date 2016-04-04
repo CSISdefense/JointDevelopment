@@ -213,10 +213,10 @@ for(i in seq_along(questionsNumber)){
                   strip.background = element_blank(),
                   axis.title.x=element_blank(),
                   legend.text=element_text(size=8),
-                  plot.margin=unit(c(0,0.25,0.25,0.5),"cm"),
-                  legend.margin=unit(-0.8,"cm"),
+                  plot.margin=unit(c(0,0.25,-0.25,0.5),"cm"),
+                  legend.margin=unit(-0.5,"cm"),
                   legend.key.size=unit(0.25,"cm"),
-                  legend.position="bottom")
+                  legend.position="right")
     }
     else{
         #This is a trick to allow each of the multiple part questions to have a different score
@@ -248,18 +248,18 @@ for(i in seq_along(questionsNumber)){
                 #strip.background = element_blank(),
                 axis.title.x=element_blank(),
                 legend.text=element_text(size=8),
-                plot.margin=unit(c(0,0.5,0.25,0),"cm"),
-                legend.margin=unit(-0.8,"cm"),
+                plot.margin=unit(c(0,0.5,-0.25,0),"cm"),
+                legend.margin=unit(-0.5,"cm"),
                 legend.key.size=unit(0.25,"cm"),
-                legend.position="bottom")
+                legend.position="right")
     }
     # CHANGE SAVE LOCATION HERE
     filepath <- paste("K:/Development/JointDevelopment/FinalGraphs/",
                       "q",questionsNumber[i],".png",sep = "")
     
-    graphwidth<-2+1.333*length(unique(oneQdata$CharacteristicLetter))
+    graphwidth<-2+1.5*length(unique(oneQdata$CharacteristicLetter))
     # CHANGE GRAPH SIZE AND RESOLUTION HERE            
-    ggsave(filepath, width = graphwidth, height = 3, unit="in", dpi = 300)      
+    ggsave(filepath, width = graphwidth, height = 2.25, unit="in", dpi = 300)      
 }
 
 
@@ -360,7 +360,7 @@ for(i in c(3,7,8)){
     filepath <- paste("K:/Development/JointDevelopment/FinalGraphs/",
                       "q",i,"scatter.png",sep = "")
     
-    graphwidth<-6
+    graphwidth<-6.5
     # CHANGE GRAPH SIZE AND RESOLUTION HERE            
     ggsave(filepath, width = graphwidth, height = 3, unit="in", dpi = 300)      
 }
