@@ -244,12 +244,13 @@ for(i in seq_along(questionsNumber)){
                   axis.title.x=element_text(size=8),
                   axis.title.y=element_text(size=8))+ #size=axis.text.
             
-            theme(#strip.text = element_blank(), 
+            theme(strip.text = element_text(size=7), 
                 #strip.background = element_blank(),
                 axis.title.x=element_blank(),
                 legend.text=element_text(size=8),
                 plot.margin=unit(c(0,0.5,-0.25,0),"cm"),
-                legend.margin=unit(-0.5,"cm"),
+                # panel.margin=unit(0.5,"cm"),
+                legend.margin=unit(-0.2,"cm"),
                 legend.key.size=unit(0.25,"cm"),
                 legend.position="right")
     }
