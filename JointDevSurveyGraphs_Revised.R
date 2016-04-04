@@ -27,7 +27,8 @@ originalwd <- getwd()
 # Reads excel sheets by name with read.xlsx2() [xlsx package]
 # and creates data tables [data.table package] with the data read.
 # Check file path names and spreadsheet names if this isn't working
-setwd("K:/Development/JointDevelopment")
+# setwd("K:/Development/JointDevelopment")
+setwd("C:/Users/Greg Sanders/Documents/Development/JointDevelopment")
 
 JSF <- data.table(read.xlsx2("./Surveys/Response MatrixJSF.xlsx", 
                              sheetName = "Sheet2"))
@@ -173,7 +174,7 @@ maxheight <- max(weightsum$Weight)
 #                   legend.position="right")
 # 
 # # CHANGE SAVE LOCATION HERE
-#       filepath <- paste("K:/Development/JointDevelopment/FinalGraphs/",
+#       filepath <- paste("./FinalGraphs/",
 #                         "q",questions[i],".png",sep = "")
 # 
 # # CHANGE GRAPH SIZE AND RESOLUTION HERE            
@@ -255,7 +256,7 @@ for(i in seq_along(questionsNumber)){
                 legend.position="right")
     }
     # CHANGE SAVE LOCATION HERE
-    filepath <- paste("K:/Development/JointDevelopment/FinalGraphs/",
+    filepath <- paste("./FinalGraphs/",
                       "q",questionsNumber[i],".png",sep = "")
     
     graphwidth<-2+1.5*length(unique(oneQdata$CharacteristicLetter))
@@ -343,6 +344,10 @@ for(i in c(3,7,8)){
                                        vjust = 1, 
                                        hjust=1))+ #size=axis.text.
         guides(color=FALSE)+
+        geom_abline(slope=1)+
+        annotate("text", x = 1, y = 6, label = "Relies on X",size=2,hjust=0)+
+    annotate("text", x = 6, y = 1, label = "Relies on Y",size=2,hjust=1)+
+        # geom_abline()
         theme(axis.title.x=element_text(size=8),
               axis.title.y=element_text(size=8)
               # plot.title=element_text(hjust=0)
@@ -358,7 +363,7 @@ for(i in c(3,7,8)){
             legend.position="right")
     
     # CHANGE SAVE LOCATION HERE
-    filepath <- paste("K:/Development/JointDevelopment/FinalGraphs/",
+    filepath <- paste("./FinalGraphs/",
                       "q",i,"scatter.png",sep = "")
     
     graphwidth<-6.5
