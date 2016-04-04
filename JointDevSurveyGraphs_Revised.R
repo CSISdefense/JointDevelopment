@@ -7,6 +7,7 @@
 library(xlsx)     # to read excel files
 library(data.table)     # for data management
 library(ggplot2)  # to produce graphics
+library(grid)   # to produce graphics
 library(dplyr)    # for data management
 library(plyr)     # for data management
 library(tidyr)    # for data management
@@ -40,6 +41,7 @@ M777$Weight <- as.numeric(as.character(M777$Weight))
 AGS$Score <- as.numeric(as.character(AGS$Score))
 AGS$Weight <- as.numeric(as.character(AGS$Weight))
 
+
 # MERGE DATA:
 # tags each dataset with the program it comes from, then merges datasets 
 JSF <- mutate(JSF, Program = "JSF")
@@ -53,6 +55,8 @@ SurveyData <- rbind(JSF, M777, AGS, fill = TRUE)
 questions <- data.table(read.csv("./Surveys/Questions.csv"))
 SurveyLevels <- data.table(read.csv("./Surveys/SurveyLevels.csv"))
 
+SurveyLevels$Level <- gsub("\\\\n","\n",SurveyLevels$Level)
+questions$SubTitle <- gsub("\\\\n","\n",questions$SubTitle)
 
 ################################################################################
 #     PREPARE TO CREATE GRAPHS
@@ -72,18 +76,24 @@ ZeroSurveySummary$Weight<-0
 SurveySummary<-ddply(rbind(SurveySummary,ZeroSurveySummary), 
                      .(Characteristic,Score,Program),
                      .fun=summarise,
-                     Weight=sum(Weight)
+                     Weight=sum(Weight,na.rm=TRUE) #JSF has some missing responses
 )
 
 SurveySummary<-ddply(SurveySummary, 
                      .(Characteristic,Program),
                      .fun=mutate,
-                     Percent=Weight/sum(Weight)
+                     Percent=Weight/sum(Weight,na.rm=TRUE) #JSF has some missing responses
 )
 
 SurveySummary$CharacteristicNumber<-substring(SurveySummary$Characteristic,1,1)
 SurveySummary$CharacteristicLetter<-substring(SurveySummary$Characteristic,2,2)
 SurveySummary$CharacteristicLetter[SurveySummary$CharacteristicLetter==""]<-NA
+
+SurveyLevels$CharacteristicNumber<-substring(SurveyLevels$Characteristic,1,1)
+SurveyLevels$CharacteristicLetter<-substring(SurveyLevels$Characteristic,2,2)
+SurveyLevels$CharacteristicLetter[SurveyLevels$CharacteristicLetter==""]<-NA
+
+
 
 SurveySummary<-join(SurveySummary,questions,by="Characteristic")
 
@@ -167,13 +177,14 @@ maxheight <- max(weightsum$Weight)
 for(i in seq_along(questionsNumber)){
     
     oneQdata <- filter(SurveySummary, CharacteristicNumber == questionsNumber[i])
+    oneqlabels <- filter(SurveyLevels, CharacteristicNumber == questionsNumber[i])
     
     if(any(is.na(oneQdata$CharacteristicLetter))){
         ggplot(oneQdata, aes(x=Score, y= Percent,  fill=Program, color=Program)) + # y = Weight,
             geom_area(alpha=0.5, position = "identity") +#stat = "identity"
-            labs(y= "Percent of Responses", x= "Score") +
+            labs(y= "Percent of Responses") + #, x= "Score"
             #facet_grid(Program ~ .) +
-            scale_x_continuous(limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
+            scale_x_continuous(limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6),  labels=oneqlabels$Level) +
             scale_y_continuous( labels = percent_format())+
 #             scale_y_continuous(limits = c(0,maxheight), 
 #                                breaks = seq(0, floor(maxheight), 1)) +
@@ -181,14 +192,22 @@ for(i in seq_along(questionsNumber)){
             scale_color_brewer(palette = "Accent") +
             ggtitle(questionTitle2[i]) +
             theme(plot.title=element_text(size = rel(1), face = "bold")) +
+            theme(axis.text.x=element_text(angle=45,
+                                           size=7,
+                                           vjust = 1, 
+                                           hjust=1))+ #size=axis.text.
             theme(strip.text = element_blank(), 
                   strip.background = element_blank(),
-                  legend.position="right")
+                  axis.title.x=element_blank(),
+                  legend.text=element_text(size=8),
+                  legend.margin=unit(-0.8,"cm"),
+                  # plot.margin = unit(x = c(-5, 0, 0, 0), units = "mm"),
+                  legend.position="bottom")
     }
     else{
         ggplot(oneQdata, aes(x=Score, y = Percent, fill = Program, color=Program)) +
             geom_area(alpha=0.5, position = "identity") +
-            labs(y= "Percent of Responses", x= "Score") +
+            labs(y= "Percent of Responses") + #, x= "Score"
             facet_grid(. ~ SubTitle) +
             scale_x_continuous(limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
             scale_y_continuous( labels = percent_format())+
@@ -200,7 +219,8 @@ for(i in seq_along(questionsNumber)){
             theme(plot.title=element_text(size = rel(1), face = "bold")) +
             theme(#strip.text = element_blank(), 
                   #strip.background = element_blank(),
-                  legend.position="right")
+                axis.title.x=element_blank(),
+                  legend.position="bottom")
     }
     # CHANGE SAVE LOCATION HERE
     filepath <- paste("K:/Development/JointDevelopment/FinalGraphs/",
