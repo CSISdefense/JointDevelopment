@@ -27,8 +27,8 @@ originalwd <- getwd()
 # Reads excel sheets by name with read.xlsx2() [xlsx package]
 # and creates data tables [data.table package] with the data read.
 # Check file path names and spreadsheet names if this isn't working
-# setwd("K:/Development/JointDevelopment")
-setwd("C:/Users/Greg Sanders/Documents/Development/JointDevelopment")
+setwd("K:/Development/JointDevelopment")
+# setwd("C:/Users/Greg Sanders/Documents/Development/JointDevelopment")
 
 JSF <- data.table(read.xlsx2("./Surveys/Response MatrixJSF.xlsx", 
                              sheetName = "Sheet2"))
@@ -61,6 +61,7 @@ questions <- data.table(read.csv("./Surveys/Questions.csv"))
 SurveyLevels <- data.table(read.csv("./Surveys/SurveyLevels.csv"))
 
 SurveyLevels$Level <- gsub("\\\\n","\n",SurveyLevels$Level)
+SurveyLevels$LevelEnds <- gsub("\\\\n","\n",SurveyLevels$LevelEnds)
 questions$SubTitle <- gsub("\\\\n","\n",questions$SubTitle)
 
 ################################################################################
@@ -97,6 +98,8 @@ SurveySummary$CharacteristicNumber<-substring(SurveySummary$Characteristic,1,1)
 SurveySummary$CharacteristicLetter<-substring(SurveySummary$Characteristic,2,2)
 SurveySummary$CharacteristicLetter[SurveySummary$CharacteristicLetter==""]<-NA
 
+
+
 SurveyLevels$CharacteristicNumber<-substring(SurveyLevels$Characteristic,1,1)
 SurveyLevels$CharacteristicLetter<-substring(SurveyLevels$Characteristic,2,2)
 SurveyLevels$CharacteristicLetter[SurveyLevels$CharacteristicLetter==""]<-NA
@@ -104,6 +107,12 @@ SurveyLevels$CharacteristicLetter[SurveyLevels$CharacteristicLetter==""]<-NA
 
 
 SurveySummary<-join(SurveySummary,questions,by="Characteristic")
+
+SurveyAverage<-ddply(SurveySummary, 
+                     .(Characteristic,Program,CharacteristicNumber,CharacteristicLetter, SubTitle),
+                     .fun=summarise,
+                     Average=sum(Weight*Score,na.rm=TRUE)/sum(Weight,na.rm=TRUE)
+)
 
 SurveySummary[order(SurveySummary$Program,SurveySummary$Characteristic,SurveySummary$Score),]
 SurveyLevels[order(SurveyLevels$Characteristic,SurveyLevels$Score),]
@@ -128,14 +137,14 @@ questionsNumber <- unique(SurveySummary$CharacteristicNumber)
 # SurveySummary$SubTitle[SurveySummary$Characteristic=="8b"]<-  "By Political or\nIndustrial Goals"
 
 
-questionTitle <- c("Figure 1.  Integration",
-                   "Figure 2. Number of\nParticipating Countries",
+questionTitle <- c("Figure 1. Extent of Integration",
+                   "Figure 2. Number of Participating Countries",
                    "Figure 3. Decision Making",
                    "Figure 4. Commitment",
                    "Figure 5. Flexibility",
-                   "Figure 6. Alignment of\nOperational Needs",
-                   "Figure 7. Tradeoff Between\nLeading-Edge Technology and Cost",
-                   "Figure 8. Workshare Distribution"
+                   "Figure 6. Alignment of Operational Needs",
+                   "Figure 7. Tradeoff Between Leading-Edge Technology and Cost",
+                   "Figure 8. Basis of Workshare Distribution"
                    
 )
 
@@ -187,34 +196,38 @@ for(i in seq_along(questionsNumber)){
     
     oneQdata <- filter(SurveySummary, CharacteristicNumber == questionsNumber[i])
     oneQlabels <- filter(SurveyLevels, CharacteristicNumber == questionsNumber[i])
+    oneQaverage <- filter(SurveyAverage, CharacteristicNumber == questionsNumber[i])
     
     if(any(is.na(oneQdata$CharacteristicLetter))){
         ggplot(oneQdata, aes(x=Score, y= Percent,  fill=Program, color=Program)) + # y = Weight,
             geom_area(alpha=0.5, position = "identity") +#stat = "identity"
-            labs(y= "Percent of Responses") + #, x= "Score"
+            geom_vline(data=oneQaverage, aes(xintercept=Average, color = Program))+
+            labs(y= "Percent of Responses",
+                 x=gsub("\n"," ",filter(questions, substring(questions$Characteristic,1,1)== i)$SubTitle)) + #, x= "Score") + #, x= "Score"
             #facet_grid(Program ~ .) +
             scale_x_continuous( breaks=c(1:nrow(oneQlabels)),
                                 limits = c(0.5,6.5),
-                                labels=paste(oneQlabels$Score,oneQlabels$Level,sep="-"))+
+                                labels=paste(oneQlabels$Score,
+                                             ifelse(oneQlabels$LevelEnds=="","",
+                                                 paste("\n",oneQlabels$LevelEnds,sep="")),sep=""))+
             scale_y_continuous( labels = percent_format())+
             #             scale_y_continuous(limits = c(0,maxheight), 
             #                                breaks = seq(0, floor(maxheight), 1)) +
             scale_fill_brewer(palette = "Accent") +
             scale_color_brewer(palette = "Accent") +
             ggtitle(questionTitle[i]) +
-            theme(plot.title=element_text(size = rel(1), face = "bold")) +
-            theme(axis.text.x=element_text(angle=45,
+            theme(plot.title=element_text(size = rel(1), face = "bold",hjust=0.4)) +
+            theme(axis.text.x=element_text(angle=0,
                                            size=7,
                                            vjust = 1, 
-                                           hjust=1),
+                                           hjust=0.5),
                   axis.text.y=element_text(size=7),
-                  axis.title.x=element_text(size=8),
+                  axis.title.x=element_text(size=8,hjust=0.4),
                   axis.title.y=element_text(size=8))+ #size=axis.text.
             theme(strip.text = element_blank(), 
                   strip.background = element_blank(),
-                  axis.title.x=element_blank(),
                   legend.text=element_text(size=8),
-                  plot.margin=unit(c(0,0.25,-0.25,0.5),"cm"),
+                  plot.margin=unit(c(0,0.25,0,0),"cm"),
                   legend.margin=unit(-0.5,"cm"),
                   legend.key.size=unit(0.25,"cm"),
                   legend.position="right")
@@ -224,11 +237,18 @@ for(i in seq_along(questionsNumber)){
         #1-6 for a, 7-12 for b, and 13-18 for c
         oneQdata$Score[oneQdata$CharacteristicLetter=="b"]<-oneQdata$Score[oneQdata$CharacteristicLetter=="b"]+6
         oneQdata$Score[oneQdata$CharacteristicLetter=="c"]<-oneQdata$Score[oneQdata$CharacteristicLetter=="c"]+12
+        
+        oneQaverage$Average[oneQaverage$CharacteristicLetter=="b"]<-oneQaverage$Average[oneQaverage$CharacteristicLetter=="b"]+6
+        oneQaverage$Average[oneQaverage$CharacteristicLetter=="c"]<-oneQaverage$Average[oneQaverage$CharacteristicLetter=="c"]+12
+        
         ggplot(oneQdata, aes(x=Score, y = Percent, fill = Program, color=Program)) +
             geom_area(alpha=0.5, position = "identity") +
+            geom_vline(data=oneQaverage, aes(xintercept=Average, color = Program))+
             labs(y= "Percent of Responses") + #, x= "Score"
             scale_x_continuous(breaks=c(1:nrow(oneQlabels)),
-                               labels=paste(oneQlabels$Score,oneQlabels$Level,sep="-"))+#limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
+                               labels=paste(oneQlabels$Score,
+                                            ifelse(oneQlabels$LevelEnds=="","",
+                                                   paste("\n",oneQlabels$LevelEnds,sep="")),sep=""))+
             facet_grid(. ~ SubTitle, scales="free_x") +
             scale_y_continuous( labels = percent_format())+
             # scale_y_continuous(limits = c(0,maxheight), 
@@ -237,23 +257,23 @@ for(i in seq_along(questionsNumber)){
             scale_color_brewer(palette = "Accent") +
             ggtitle(questionTitle[i]) +
             theme(plot.title=element_text(size = rel(1), face = "bold")) +
-            theme(axis.text.x=element_text(angle=45,
+            theme(axis.text.x=element_text(angle=0,
                                            size=7,
                                            vjust = 1, 
-                                           hjust=1),
+                                           hjust=0.5),
                   axis.text.y=element_text(size=7),
                   axis.title.x=element_text(size=8),
                   axis.title.y=element_text(size=8))+ #size=axis.text.
             
             theme(strip.text = element_text(size=7), 
-                #strip.background = element_blank(),
-                axis.title.x=element_blank(),
-                legend.text=element_text(size=8),
-                plot.margin=unit(c(0,0.5,-0.25,0),"cm"),
-                # panel.margin=unit(0.5,"cm"),
-                legend.margin=unit(-0.2,"cm"),
-                legend.key.size=unit(0.25,"cm"),
-                legend.position="right")
+                  panel.margin=unit(0.35,"in"),#strip.background = element_blank(),
+                  axis.title.x=element_blank(),
+                  legend.text=element_text(size=8),
+                  plot.margin=unit(c(0,0.75,-0.1,0),"cm"),
+                  # panel.margin=unit(0.5,"cm"),
+                  legend.margin=unit(-0.4,"cm"),
+                  legend.key.size=unit(0.25,"cm"),
+                  legend.position="bottom")
     }
     # CHANGE SAVE LOCATION HERE
     filepath <- paste("./FinalGraphs/",
@@ -319,46 +339,97 @@ for(i in c(3,7,8)){
         geom_point() +
         scale_size_area(labels = percent_format())+
         labs(x= gsub("\n"," ",filter(questions, substring(questions$Characteristic,1,1) == i  &
-                           substring(questions$Characteristic,2,2)=='a')$SubTitle),
+                                         substring(questions$Characteristic,2,2)=='a')$SubTitle),
              y= gsub("\n"," ",filter(questions, substring(questions$Characteristic,1,1)== i  &
-                            substring(questions$Characteristic,2,2)=='b')$SubTitle)) +
-    scale_x_continuous(breaks=c(1:nrow(oneQlabelsA)),
-                       limits = c(0.5,6.5),
-                       labels=paste(oneQlabelsA$Score,oneQlabelsA$Level,sep="-"))+#limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
+                                         substring(questions$Characteristic,2,2)=='b')$SubTitle)) +
+        scale_x_continuous(breaks=c(1:nrow(oneQlabelsA)),
+                           limits = c(0.5,6.5),
+                         
+                           labels=  paste(oneQlabelsA$Score,
+                                          ifelse(oneQlabelsA$LevelEnds=="","",
+                                                 paste("\n",oneQlabelsA$LevelEnds,sep="")),sep=""))+#limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
         facet_grid(. ~ Program) +
         scale_y_continuous(breaks=c(1:nrow(oneQlabelsB)),
                            limits = c(0.5,6.5),
-                           labels=paste(oneQlabelsB$Score,oneQlabelsB$Level,sep="-"))+#limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
+                           labels=paste(oneQlabelsB$Score,
+                                        ifelse(oneQlabelsB$LevelEnds=="","",
+                                               paste("-",oneQlabelsB$LevelEnds,sep="")),sep=""))+#limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
+                               # paste(oneQlabelsB$Score,oneQlabelsB$LevelEnds,sep=""))+#limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
         # scale_y_continuous(limits = c(0,maxheight), 
         # breaks = seq(0, floor(maxheight), 1)) +
         scale_fill_brewer(palette = "Accent") +
         scale_color_brewer(palette = "Accent") +
         ggtitle(questionTitle[i]) +
         theme(plot.title=element_text(size = rel(1), face = "bold")) +
-        theme(axis.text.x=element_text(angle=45,
+        theme(axis.text.x=element_text(angle=0,
                                        size=7,
                                        vjust = 1, 
-                                       hjust=1))+ #size=axis.text.
-        theme(axis.text.y=element_text(angle=45,
+                                       hjust=0.5))+ #size=axis.text.
+        theme(axis.text.y=element_text(angle=0,
                                        size=7,
-                                       vjust = 1, 
-                                       hjust=1))+ #size=axis.text.
+                                       vjust = 0.5, 
+                                       hjust=0.5))+ #size=axis.text.
         guides(color=FALSE)+
-        geom_abline(slope=1)+
-        annotate("text", x = 1, y = 6, label = "Relies on X",size=2,hjust=0)+
-    annotate("text", x = 6, y = 1, label = "Relies on Y",size=2,hjust=1)+
+        geom_abline(slope=1,lty=2,alpha=0.5)+
+        annotate("text",
+                 x = 6, 
+                 y = 0.5, 
+                 label = filter(questions, substring(questions$Characteristic,1,1) == i  &
+                                    substring(questions$Characteristic,2,2)=='a')$ScatterAnnotation,
+                 alpha=0.5,
+                 size=2,
+                 hjust=1)+
+        annotate("text",
+                 x = 0.5,
+                 y = 6, 
+                 angle = 90,
+                 label = filter(questions, substring(questions$Characteristic,1,1) == i  &
+                                    substring(questions$Characteristic,2,2)=='b')$ScatterAnnotation,
+                 alpha=0.5,
+                 size=2,
+                 hjust=1)+
+        annotate("text",
+                 x = 0.75,
+                 y = 0.75, 
+                 angle = 45,
+                 label = "Equal Influence",
+                 size=2,
+                 alpha=0.5,
+                 hjust=0,
+                 vjust=1)+
+        geom_segment(aes(x = 4,
+                         y = 1,
+                         xend = 6, 
+                         yend = 1), 
+                     colour='#000000',
+                     size=0.5,
+                     alpha=0.5,
+                     arrow = arrow(length = unit(0.2, "cm"))
+                     )+
+        geom_segment(aes(x = 1,
+                         y = 4,
+                         xend = 1, 
+                         yend = 6), 
+                     colour='#000000',
+                     size=0.5,
+                     alpha=0.5,
+                     arrow = arrow(length = unit(0.2, "cm"))
+        )+
         # geom_abline()
         theme(axis.title.x=element_text(size=8),
-              axis.title.y=element_text(size=8)
+              axis.title.y=element_text(size=8,hjust=0.65)
               # plot.title=element_text(hjust=0)
-              )+
+        )+
+        theme(aspect.ratio = 1)+
         theme(#strip.text = element_blank(), 
             #strip.background = element_blank(),
             # axis.title.x=element_blank(),
             # axis.title.y=element_blank(),
+            strip.text = element_text(size=7), 
             legend.text=element_text(size=8),
             legend.margin=unit(-0.5,"cm"),
             plot.margin=unit(c(0,0,0,0),"cm"),
+            panel.margin=unit(0.1,"in"),
             legend.key.size=unit(0.1,"cm"),
             legend.position="right")
     

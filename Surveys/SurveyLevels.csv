@@ -1,79 +1,79 @@
-Characteristic,Score,FullLevel,Level,Detailed
-2,1,Never influenced ,Never influenced ,The number of countries participating in the program never influenced decision making throughout the life of the program 
-2,2,Slight Influence,Slight influence,
-2,3,Definitely Influenced\na Few Times,Def. influenced\na few times,
-2,4,Influenced More\nOften than Not,Influenced more\noften than not,
-2,5,Often Influenced\nDecision Making,Often influenced\ndecision making,
-2,6,Always Influenced,Always influenced,The number of countries participating in the program never influenced decision making throughout the life of the program 
-4,1,There were no explicit measures\nto prevent defection from the outset,No explicit measures to\nprevent defection from the outset,There were no explicit measures to prevent defection from the outset
-4,2,No Explicit Measures but\nPossibility to Create Them,No explicit measures but possibility\nto create them,
-4,3,Minor Incentives to\nPrevent Defection,Minor Incentives to prevent\ndefection,
-4,4,Measures that can be\nEasily Incurred,Measures that can be easily\nincurred,
-4,5,Measures that can be\nModerately Incurred,Measures that can be moderately\nincurred,
-4,6,Explicit and Strong Measures,Explicit & strong measures,There were no explicit measures to prevent defection from the outset
-5,1,No flexibility,No flexibility,"On a scale of one to six, rate the level of flexibility the NATO AGS program had in being able to change requirements in response to program updates such as an addition of participating countries or new developments where "
-5,2,Changes Only Under Limited\nCircumstances with High Hurdles,Changes only under limited\ncircum. with high hurdles,`
-5,3,Changes Under Multiple\nCircumstances but with High Hurdles,Changes under multiple circum.\nbut with high hurdles,
-5,4,Changes were Easy but only\nin Limited Cases,Changes were easy but only\nin limited cases,
-5,5,Changes Were Easy Under\nMultiple Circumstances,Changes Were easy Under\nmultiple circum.,
-5,6,Broad Flexibility under a\nrange of circumstances,Broad flexibility under a\nrange of circum.,Requirements changes could be easily initiated in a range of circumstance. 
-6,1,Distinct operational\nrequirements ,Distinct op. req. ,Each participant had distinct operational requirements between countries 
-6,2,Slight compatibility\nin strategic needs,Slight compatibility in strategic\nneeds,
-6,3,Compatible Strategic Needs\nand Different Operational Needs,Compatible strategic needs\n& Dif. op. needs,
-6,4,Compatible in Strategic Needs\nand Slight Overlap in Operational Needs,Compatible in strategic needs\n& Slight Overlap in op. needs,
-6,5,Similar Operational Requirements,Similar op. req.,
-6,6,Identical Operational Requirements,Identical op. req.,– Identical operational requirements between countries.
-1a,1,No integration,No integr.,No integration between government and industry 
-1a,2,Occasional Integration,Occasional integr.,
-1a,3,Regular Consultation on\nDecisions,Regular consultation on decisions,
-1a,4,Decision-making Integration,Decision-making integr.,
-1a,5,Working-Together Integration,Working-together integr.,
-1a,6,Complete Integration with\nEqual Authority,Complete integr. With equal authority,Complete integration where government and industry worked together in co-located facilities and had equal authority to make decisions. 
-1b,1,No integration,No integr.,
-1b,2,Separate decision-making\nbut some integration,Separate decision-making but\nsome integr.,
-1b,3,Regular International\nConsultation on Decisions,Regular international consultation\non decisions,
-1b,4,Decision-Making Integration,Decision-making integr.,
-1b,5,Working-Together Integration,Working-together integr.,
-1b,6,Complete Integration with\nEqual Authority,Complete integr. with equal authority,
-1c,1,No integration,No integr.,No integration between industries 
-1c,2,Occasional integration,Occasional integr.,
-1c,3,Regular Consultation on\nDecisions Between Industries,Regular consultation on decisions\nbetween industries,
-1c,4,Decision-making Integration,Decision-making integr.,
-1c,5,Working-Together Integration,Working-together integr.,
-1c,6,Complete integration with\nequal authority,Complete integr. with equal authority,Complete integration with equal authority
-3a,1,Never Depended,Never depended,– Decision making during the life of the NATO AGS program never depended on operational needs that could not be met by competing systems 
-3a,2,Slightly depended,Slightly depended,
-3a,3,Depended Occasionally,Depended occas.,
-3a,4,Depended More than Occasionally,Depended more than occas.,
-3a,5,Often Depended,Often depended,
-3a,6,Always Depended,Always depended,Decision making during the life of the NATO AGS program always depended on filling distinct unmet operational needs. 
-3b,1,Never Depended,Never depended,– Decision making during the life of the NATO AGS program never depended on diplomatic or political needs and
-3b,2,Slightly depended,Slightly depended,
-3b,3,Depended Occasionally,Depended occas.,
-3b,4,Depended More than Occasionally,Depended more than occas.,
-3b,5,Often Depended,Often depended,
-3b,6,Always Depended,Always depended,Decision making during the life of the NATO AGS program always depended on diplomatic or political needs.
-7a,1,Not Based on Demand for\nLeading-Edge Technology,Not based on dem. For l.e. tech.,Program mission completely not based on demand for l.e. technology and
-7a,2,Slightly Based on Demand\nfor Leading-Edge Tech,Slightly based on dem. for l.e. tech,
-7a,3,Moderately based on demand\nfor l.e. tech,Moderately based on dem. for l.e. tech,
-7a,4,Equally Based on Demand for\nLeading-Edge Tech as Other Demands,Half based on dem. for l.e. tech.,
-7a,5,Mostly Based on Demand for\nLeading-Edge Tech,Mostly based on dem. for l.e. tech,
-7a,6,Entirely Based on Demand for\nLeading-edge Tech.,Entirely based on dem. for l.e. tech.,"1a.   On a scale of one to six, evaluate the extent to which the mission of the NATO AGS program was based on the demand for developing low-cost economies of scale, where "
-7b,1,Not Based on Demand for\nEconomies of Scale,Not based on dem. for econ. of scale,Program mission completely not based on demand for low-cost economies of scale and
-7b,2,Slightly Based on Demand\nfor Economies of Scale,Slightly based on dem. for econ. of scale,
-7b,3,Moderately Based on Demand\nfor Economies of Scale,Moderately based on dem. for econ. of scale,
-7b,4,Equally Based on Demand\nfor Economies of Scale,Half based on dem. for econ. of scale,
-7b,5,Mostly Based on Demand\nfor Economies of Scale,Mostly based on dem. for econ. of scale,
-7b,6,Entirely based on demand\nfor economics of scale,Entirely based on dem. for economics of scale,Program mission entirely based on demand for low-cost economies of scale.
-8a,1,Never based on\ncomparative advantage,Never based on comp. adv.,Workshare distribution was never based on comparative advantage
-8a,2,Slightly Based on\nComparative Advantage,Slightly based on comp. adv.,
-8a,3,Based on Comparative\n Advantage Occasionally,Based on comp. adv. occas.,
-8a,4,Based on Comparative\nAdvantage more than Occasionally ,Based on comp. adv. more than occas. ,
-8a,5,Often Took Into Account\nComparative Advantage,Often took Into account comp. adv.,
-8a,6,Always based on\ncomparative advantage,Always based on comp. adv.,Workshare distribution was always based on comparative advantage.
-8b,1,Never Based on Political\nor Industrial-Base Goals,Never based on pol. or ind.-base goals,Workshare distribution was never based on political or industrial-base goals 
-8b,2,Slightly based on political\nor industrial-base goals,Slightly based on pol. or ind.-base goals,
-8b,3,Based on Political or\nIndustrial-base Goals Occasionally,Based on pol. or ind.-base goals occas.,
-8b,4,Based on Political or\nIndustrial-Base Goals More Than Occasionally,Based on pol. or ind.-base goals more than occas.,
-8b,5,Often Takes Into Account\nPolitical or Industrial-Base Goals,Often takes Into account pol. or ind.-base goals,
-8b,6,Always Based On Political\nor Industrial-Base Goals,Always based On pol. or ind.-base goals,Workshare distribution was always based on political or industrial-base goals.
+Characteristic,Score,FullLevel,Level,LevelEnds,Detailed
+2,1,Never influenced ,Never influenced ,Never\ninfluenced ,The number of countries participating in the program never influenced decision making throughout the life of the program 
+2,2,Slight Influence,Slight influence,,
+2,3,Definitely Influenced\na Few Times,Def. influenced\na few times,,
+2,4,Influenced More\nOften than Not,Influenced more\noften than not,,
+2,5,Often Influenced\nDecision Making,Often influenced\ndecision making,,
+2,6,Always Influenced,Always influenced,Always\ndepended,The number of countries participating in the program never influenced decision making throughout the life of the program 
+4,1,There were no explicit measures\nto prevent defection from the outset,No explicit measures to\nprevent defection from the outset,No explicit measures\nto prevent defection\nfrom the outset,There were no explicit measures to prevent defection from the outset
+4,2,No Explicit Measures but\nPossibility to Create Them,No explicit measures but possibility\nto create them,,
+4,3,Minor Incentives to\nPrevent Defection,Minor Incentives to prevent\ndefection,,
+4,4,Measures that can be\nEasily Incurred,Measures that can be easily\nincurred,,
+4,5,Measures that can be\nModerately Incurred,Measures that can be moderately\nincurred,,
+4,6,Explicit and Strong Measures,Explicit & strong measures,Explicit & strong\nmeasures,There were no explicit measures to prevent defection from the outset
+5,1,No flexibility,No flexibility,No flexibility,"On a scale of one to six, rate the level of flexibility the NATO AGS program had in being able to change requirements in response to program updates such as an addition of participating countries or new developments where "
+5,2,Changes Only Under Limited\nCircumstances with High Hurdles,Changes only under limited\ncircum. with high hurdles,,`
+5,3,Changes Under Multiple\nCircumstances but with High Hurdles,Changes under multiple circum.\nbut with high hurdles,,
+5,4,Changes were Easy but only\nin Limited Cases,Changes were easy but only\nin limited cases,,
+5,5,Changes Were Easy Under\nMultiple Circumstances,Changes Were easy Under\nmultiple circum.,,
+5,6,Broad Flexibility under a\nrange of circumstances,Broad flexibility under a\nrange of circum.,Broad flexibility under a\nrange of circumstances,Requirements changes could be easily initiated in a range of circumstance. 
+6,1,Distinct operational\nrequirements ,Distinct op. req. ,Distinct operational\nrequirements,Each participant had distinct operational requirements between countries 
+6,2,Slight compatibility\nin strategic needs,Slight compatibility in strategic\nneeds,,
+6,3,Compatible Strategic Needs\nand Different Operational Needs,Compatible strategic needs\n& Dif. op. needs,,
+6,4,Compatible in Strategic Needs\nand Slight Overlap in Operational Needs,Compatible in strategic needs\n& Slight Overlap in op. needs,,
+6,5,Similar Operational Requirements,Similar op. req.,,
+6,6,Identical Operational Requirements,Identical op. req.,Identical operational\nrequirements,– Identical operational requirements between countries.
+1a,1,No integration,No integr.,No integr.,No integration between government and industry 
+1a,2,Occasional Integration,Occasional integr.,,
+1a,3,Regular Consultation on\nDecisions,Regular consultation on decisions,,
+1a,4,Decision-making Integration,Decision-making integr.,,
+1a,5,Working-Together Integration,Working-together integr.,,
+1a,6,Complete Integration with\nEqual Authority,Complete integr. With equal authority,Complete\nintegr. With\nequal authority,Complete integration where government and industry worked together in co-located facilities and had equal authority to make decisions. 
+1b,1,No integration,No integr.,No integr.,
+1b,2,Separate decision-making\nbut some integration,Separate decision-making but\nsome integr.,,
+1b,3,Regular International\nConsultation on Decisions,Regular international consultation\non decisions,,
+1b,4,Decision-Making Integration,Decision-making integr.,,
+1b,5,Working-Together Integration,Working-together integr.,,
+1b,6,Complete Integration with\nEqual Authority,Complete integr. with equal authority,Complete\nintegr. With\nequal authority,
+1c,1,No integration,No integr.,No integr.,No integration between industries 
+1c,2,Occasional integration,Occasional integr.,,
+1c,3,Regular Consultation on\nDecisions Between Industries,Regular consultation on decisions\nbetween industries,,
+1c,4,Decision-making Integration,Decision-making integr.,,
+1c,5,Working-Together Integration,Working-together integr.,,
+1c,6,Complete integration with\nequal authority,Complete integr. with equal authority,Complete\nintegr. With\nequal authority,Complete integration with equal authority
+3a,1,Never Depended,Never depended,Never\ndepended,– Decision making during the life of the NATO AGS program never depended on operational needs that could not be met by competing systems 
+3a,2,Slightly depended,Slightly depended,,
+3a,3,Depended Occasionally,Depended occas.,,
+3a,4,Depended More than Occasionally,Depended more than occas.,,
+3a,5,Often Depended,Often depended,,
+3a,6,Always Depended,Always depended,Always\ndepended,Decision making during the life of the NATO AGS program always depended on filling distinct unmet operational needs. 
+3b,1,Never Depended,Never depended,Never\ndepended,– Decision making during the life of the NATO AGS program never depended on diplomatic or political needs and
+3b,2,Slightly depended,Slightly depended,,
+3b,3,Depended Occasionally,Depended occas.,,
+3b,4,Depended More than Occasionally,Depended more than occas.,,
+3b,5,Often Depended,Often depended,,
+3b,6,Always Depended,Always depended,Always\ndepended,Decision making during the life of the NATO AGS program always depended on diplomatic or political needs.
+7a,1,Not Based on Demand for\nLeading-Edge Technology,Not based on dem. For l.e. tech.,Not\nbased on\ndemand\nfor\nleading\nedge tech.,Program mission completely not based on demand for l.e. technology and
+7a,2,Slightly Based on Demand\nfor Leading-Edge Tech,Slightly based on dem. for l.e. tech,,
+7a,3,Moderately based on demand\nfor l.e. tech,Moderately based on dem. for l.e. tech,,
+7a,4,Equally Based on Demand for\nLeading-Edge Tech as Other Demands,Half based on dem. for l.e. tech.,,
+7a,5,Mostly Based on Demand for\nLeading-Edge Tech,Mostly based on dem. for l.e. tech,,
+7a,6,Entirely Based on Demand for\nLeading-edge Tech.,Entirely based on dem. for l.e. tech.,Entirely\nbased on\ndemand\nfor leading\nedge tech.,"1a.   On a scale of one to six, evaluate the extent to which the mission of the NATO AGS program was based on the demand for developing low-cost economies of scale, where "
+7b,1,Not Based on Demand for\nEconomies of Scale,Not based on dem. for econ. of scale,Not based\non demand\nfor econ. of scale,Program mission completely not based on demand for low-cost economies of scale and
+7b,2,Slightly Based on Demand\nfor Economies of Scale,Slightly based on dem. for econ. of scale,,
+7b,3,Moderately Based on Demand\nfor Economies of Scale,Moderately based on dem. for econ. of scale,,
+7b,4,Equally Based on Demand\nfor Economies of Scale,Half based on dem. for econ. of scale,,
+7b,5,Mostly Based on Demand\nfor Economies of Scale,Mostly based on dem. for econ. of scale,,
+7b,6,Entirely based on demand\nfor economics of scale,Entirely based on dem. for economics of scale,Entirely based\non demand for\necon. of scale,Program mission entirely based on demand for low-cost economies of scale.
+8a,1,Never based on\ncomparative advantage,Never based on comp. adv.,Never\nbased\non comp.\nadv.,Workshare distribution was never based on comparative advantage
+8a,2,Slightly Based on\nComparative Advantage,Slightly based on comp. adv.,,
+8a,3,Based on Comparative\n Advantage Occasionally,Based on comp. adv. occas.,,
+8a,4,Based on Comparative\nAdvantage more than Occasionally ,Based on comp. adv. more than occas. ,,
+8a,5,Often Took Into Account\nComparative Advantage,Often took Into account comp. adv.,,
+8a,6,Always based on\ncomparative advantage,Always based on comp. adv.,Always\nbased\non comp.\nadv.,Workshare distribution was always based on comparative advantage.
+8b,1,Never Based on Political\nor Industrial-Base Goals,Never based on pol. or ind.-base goals,Never based on\npol. or ind.-base goals,Workshare distribution was never based on political or industrial-base goals 
+8b,2,Slightly based on political\nor industrial-base goals,Slightly based on pol. or ind.-base goals,,
+8b,3,Based on Political or\nIndustrial-base Goals Occasionally,Based on pol. or ind.-base goals occas.,,
+8b,4,Based on Political or\nIndustrial-Base Goals More Than Occasionally,Based on pol. or ind.-base goals more than occas.,,
+8b,5,Often Takes Into Account\nPolitical or Industrial-Base Goals,Often takes Into account pol. or ind.-base goals,,
+8b,6,Always Based On Political\nor Industrial-Base Goals,Always based On pol. or ind.-base goals,Always based on\npol. or  ind.-base goals,Workshare distribution was always based on political or industrial-base goals.
