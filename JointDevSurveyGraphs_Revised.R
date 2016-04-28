@@ -64,6 +64,17 @@ SurveyLevels$Level <- gsub("\\\\n","\n",SurveyLevels$Level)
 SurveyLevels$LevelEnds <- gsub("\\\\n","\n",SurveyLevels$LevelEnds)
 questions$SubTitle <- gsub("\\\\n","\n",questions$SubTitle)
 
+SurveyRedone<-SurveyData
+SurveyRedone$CharacteristicNumber<-substring(SurveyRedone$Characteristic,1,1)
+SurveyRedone$CharacteristicLetter<-substring(SurveyRedone$Characteristic,2,2)
+SurveyRedone$CharacteristicLetter[SurveyRedone$CharacteristicLetter==""]<-"a"
+SurveyRedone<-dcast(SurveyRedone, Program + CharacteristicNumber + Stakeholder + StakeholderPart + Weight  ~ CharacteristicLetter, value.var="Score")
+ write.xlsx2(subset(SurveyRedone,Program="JSF"),"./Surveys/Response MatrixJSF.xlsx", 
+                             sheetName = "Sheet3")
+ write.xlsx2(subset(SurveyRedone,Program="M777"),"./Surveys/Response MatrixM777.xlsx", 
+                              sheetName = "Sheet3")
+write.xlsx2(subset(SurveyRedone,Program="AGS"),"./Surveys/Response MatrixAGS.xlsx", 
+                             sheetName = "Sheet3")
 ################################################################################
 #     PREPARE TO CREATE GRAPHS
 ################################################################################
@@ -311,8 +322,8 @@ for(i in c(3,7,8)){
     oneQdataB <- filter(SurveyData, CharacteristicNumber == i  &CharacteristicLetter=='b')
     oneQdataA <- subset(oneQdataA , select=-c(Characteristic,CharacteristicLetter))
     oneQdataB <- subset(oneQdataB , select=-c(Characteristic,CharacteristicLetter))
-    oneQdataA<-rename(oneQdataA, c("Score"="ScoreA"))
-    oneQdataB<-rename(oneQdataB, c("Score"="ScoreB"))
+    oneQdataA<-dplyr::rename(oneQdataA, ScoreA=Score)
+    oneQdataB<-dplyr::rename(oneQdataB, ScoreB=Score)
     if(nrow(oneQdataA)!=nrow(oneQdataB)) stop("Number of entries is not aligned between surveys")
     oneQdata<-full_join(oneQdataA,oneQdataB)
     oneQdata<-oneQdata[complete.cases(oneQdata),]
