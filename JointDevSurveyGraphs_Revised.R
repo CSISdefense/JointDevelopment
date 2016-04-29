@@ -31,29 +31,47 @@ setwd("K:/Development/JointDevelopment")
 # setwd("C:/Users/Greg Sanders/Documents/Development/JointDevelopment")
 
 JSF <- data.table(read.xlsx2("./Surveys/Response MatrixJSF.xlsx", 
-                             sheetName = "Sheet2"))
+                             sheetName = "Sheet3"))
 M777 <- data.table(read.xlsx2("./Surveys/Response MatrixM777.xlsx", 
-                              sheetName = "Sheet2"))
+                              sheetName = "Sheet3"))
 AGS <- data.table(read.xlsx2("./Surveys/Response MatrixAGS.xlsx", 
-                             sheetName = "Sheet2"))
+                             sheetName = "Sheet3"))
+
+# write.xlsx2(JSF,"./Surveys/Response MatrixJSF.xlsx", 
+#             sheetName = "Sheet2a",append=TRUE)
+# write.xlsx2(M777,"./Surveys/Response MatrixM777.xlsx", 
+#             sheetName = "Sheet2a",append=TRUE)
+# write.xlsx2(AGS,"./Surveys/Response MatrixAGS.xlsx", 
+#             sheetName = "Sheet2a",append=TRUE)
 
 # fixes numeric data that got imported as factors 
 # ignore the NA warning, NAs are being correctly recognized now, not introduced
-JSF$Score <- as.numeric(as.character(JSF$Score))
-JSF$Weight <- as.numeric(as.character(JSF$Weight))
-M777$Score <- as.numeric(as.character(M777$Score))
-M777$Weight <- as.numeric(as.character(M777$Weight))
-AGS$Score <- as.numeric(as.character(AGS$Score))
-AGS$Weight <- as.numeric(as.character(AGS$Weight))
+# JSF$Score <- as.numeric(as.character(JSF$Score))
+# JSF$a <- as.numeric(as.character(JSF$a))
+# JSF$b <- as.numeric(as.character(JSF$b))
+# JSF$c <- as.numeric(as.character(JSF$c))
+# JSF$Weight <- as.numeric(as.character(JSF$Weight))
+# M777$a <- as.numeric(as.character(M777$a))
+# M777$b <- as.numeric(as.character(M777$b))
+# M777$c <- as.numeric(as.character(M777$c))
+# # M777$Score <- as.numeric(as.character(M777$Score))
+# M777$Weight <- as.numeric(as.character(M777$Weight))
+# SurveyWide$Score <- as.numeric(as.character(SurveyWide$Score))
 
 
 # MERGE DATA:
 # tags each dataset with the program it comes from, then merges datasets 
-JSF <- mutate(JSF, Program = "JSF")
-M777 <- mutate(M777, Program = "M777")
-AGS <- mutate(AGS, Program = "AGS")
+# JSF <- mutate(JSF, Program = "JSF")
+# M777 <- mutate(M777, Program = "M777")
+# AGS <- mutate(AGS, Program = "AGS")
 
-SurveyData <- rbind(JSF, M777, AGS, fill = TRUE)
+SurveyWide <- rbind(JSF, M777, AGS, fill = TRUE)
+SurveyWide$a <- as.numeric(as.character(SurveyWide$a))
+SurveyWide$b <- as.numeric(as.character(SurveyWide$b))
+SurveyWide$c <- as.numeric(as.character(SurveyWide$c))
+SurveyWide$Weight <- as.numeric(as.character(SurveyWide$Weight))
+SurveyWide$CharacteristicNumber <- as.numeric(as.character(SurveyWide$CharacteristicNumber))
+
 
 # CHANGE QUESTION TITLES AND LEVELS IN THESE DOCUMENTS
 # The '\n' is a line break character
@@ -64,26 +82,38 @@ SurveyLevels$Level <- gsub("\\\\n","\n",SurveyLevels$Level)
 SurveyLevels$LevelEnds <- gsub("\\\\n","\n",SurveyLevels$LevelEnds)
 questions$SubTitle <- gsub("\\\\n","\n",questions$SubTitle)
 
-SurveyRedone<-SurveyData
-SurveyRedone$CharacteristicNumber<-substring(SurveyRedone$Characteristic,1,1)
-SurveyRedone$CharacteristicLetter<-substring(SurveyRedone$Characteristic,2,2)
-SurveyRedone$CharacteristicLetter[SurveyRedone$CharacteristicLetter==""]<-"a"
-SurveyRedone<-dcast(SurveyRedone, Program + CharacteristicNumber + Stakeholder + StakeholderPart + Weight  ~ CharacteristicLetter, value.var="Score")
- write.xlsx2(subset(SurveyRedone,Program="JSF"),"./Surveys/Response MatrixJSF.xlsx", 
-                             sheetName = "Sheet3")
- write.xlsx2(subset(SurveyRedone,Program="M777"),"./Surveys/Response MatrixM777.xlsx", 
-                              sheetName = "Sheet3")
-write.xlsx2(subset(SurveyRedone,Program="AGS"),"./Surveys/Response MatrixAGS.xlsx", 
-                             sheetName = "Sheet3")
+# SurveyRedone<-SurveyWide
+# SurveyRedone$CharacteristicNumber<-substring(SurveyRedone$Characteristic,1,1)
+# SurveyRedone$CharacteristicLetter<-substring(SurveyRedone$Characteristic,2,2)
+# SurveyRedone$CharacteristicLetter[SurveyRedone$CharacteristicLetter==""]<-"a"
+# SurveyRedone<-dcast(SurveyRedone, Program + CharacteristicNumber + Stakeholder + StakeholderPart + Weight  ~ CharacteristicLetter, value.var="Score")
+#  write.xlsx2(subset(SurveyRedone,Program="JSF"),"./Surveys/Response MatrixJSF.xlsx", 
+#                              sheetName = "Sheet3",append=TRUE)
+#  write.xlsx2(subset(SurveyRedone,Program="M777"),"./Surveys/Response MatrixM777.xlsx", 
+#                               sheetName = "Sheet3",append=TRUE)
+# write.xlsx2(subset(SurveyRedone,Program="AGS"),"./Surveys/Response MatrixAGS.xlsx", 
+#                              sheetName = "Sheet3",append=TRUE)
 ################################################################################
 #     PREPARE TO CREATE GRAPHS
 ################################################################################
 
-SurveySummary<-ddply(SurveyData, 
+SurveySummary<-melt.data.table(SurveyWide
+                ,id.vars=c("Program","CharacteristicNumber","Stakeholder","StakeholderPart","Weight")
+                ,variable.name = "CharacteristicLetter"
+                ,value.name="Score")
+
+SurveySummary$CharacteristicLetter[SurveySummary$CharacteristicNumber %in% c(2,4,5,6)]<-NA
+
+SurveySummary$Characteristic<-paste(SurveySummary$CharacteristicNumber,ifelse(is.na(SurveySummary$CharacteristicLetter)
+                                                                              ,""
+                                                                              ,as.character(SurveySummary$CharacteristicLetter)),sep="")
+
+SurveySummary<-ddply(SurveySummary, 
                      .(Characteristic,Score,Program),
                      .fun=summarise,
                      Weight=sum(Weight)
 )
+
 
 ZeroSurveySummary<-expand.grid(Characteristic=unique(SurveySummary$Characteristic),
                                Program=unique(SurveySummary$Program),
@@ -116,12 +146,12 @@ SurveyLevels$CharacteristicLetter<-substring(SurveyLevels$Characteristic,2,2)
 SurveyLevels$CharacteristicLetter[SurveyLevels$CharacteristicLetter==""]<-NA
 
 
-
+questions
 SurveySummary<-join(SurveySummary,questions,by="Characteristic")
 
 SurveyAverage<-ddply(SurveySummary, 
-                     .(Characteristic,Program,CharacteristicNumber,CharacteristicLetter, SubTitle),
-                     .fun=summarise,
+                     .(Characteristic,Program),
+                     .fun=mutate,
                      Average=sum(Weight*Score,na.rm=TRUE)/sum(Weight,na.rm=TRUE)
 )
 
@@ -203,7 +233,7 @@ maxheight <- max(weightsum$Weight)
 
 
 
-for(i in seq_along(questionsNumber)){
+for(i in c(1,2,4,5,6)){
     
     oneQdata <- filter(SurveySummary, CharacteristicNumber == questionsNumber[i])
     oneQlabels <- filter(SurveyLevels, CharacteristicNumber == questionsNumber[i])
@@ -297,18 +327,16 @@ for(i in seq_along(questionsNumber)){
 
 
 
-SurveyData$CharacteristicNumber<-substring(SurveyData$Characteristic,1,1)
-SurveyData$CharacteristicLetter<-substring(SurveyData$Characteristic,2,2)
-SurveyData$CharacteristicLetter[SurveyData$CharacteristicLetter==""]<-NA
 
-# SurveyData<-ddply(SurveyData, 
+
+# SurveyWide<-ddply(SurveyWide, 
 #                      .(Characteristic,Program),
 #                      .fun=mutate,
 #                      Percent=Weight/sum(Weight,na.rm=TRUE) #JSF has some missing responses
 # )
 
-SurveySumcheck<-ddply(SurveyData, 
-                      .(Characteristic,Program,Stakeholder),
+SurveySumcheck<-ddply(SurveyWide, 
+                      .(CharacteristicNumber,Program,Stakeholder),
                       .fun=summarise,
                       Weight=sum(Weight,na.rm = TRUE)
 )
@@ -318,14 +346,10 @@ subset(SurveySumcheck,is.na(Weight)|abs(Weight-1)>0.02)
 
 for(i in c(3,7,8)){
     
-    oneQdataA <- filter(SurveyData, CharacteristicNumber == i  &CharacteristicLetter=='a')
-    oneQdataB <- filter(SurveyData, CharacteristicNumber == i  &CharacteristicLetter=='b')
-    oneQdataA <- subset(oneQdataA , select=-c(Characteristic,CharacteristicLetter))
-    oneQdataB <- subset(oneQdataB , select=-c(Characteristic,CharacteristicLetter))
-    oneQdataA<-dplyr::rename(oneQdataA, ScoreA=Score)
-    oneQdataB<-dplyr::rename(oneQdataB, ScoreB=Score)
-    if(nrow(oneQdataA)!=nrow(oneQdataB)) stop("Number of entries is not aligned between surveys")
-    oneQdata<-full_join(oneQdataA,oneQdataB)
+    oneQdata <- filter(SurveyWide, CharacteristicNumber == i )
+    oneQdata<-dplyr::rename(oneQdata, ScoreA=a)
+    oneQdata<-dplyr::rename(oneQdata, ScoreB=b)
+    oneQdata<-subset(oneQdata,select=-c(c))
     oneQdata<-oneQdata[complete.cases(oneQdata),]
     
     oneQdata<-ddply(oneQdata, 
