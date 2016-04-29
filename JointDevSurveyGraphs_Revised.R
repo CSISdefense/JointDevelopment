@@ -151,6 +151,14 @@ SurveySummary<-join(SurveySummary,questions,by="Characteristic")
 
 SurveyAverage<-ddply(SurveySummary, 
                      .(Characteristic,Program),
+                     .fun=summarise,
+                     Average=sum(Weight*Score,na.rm=TRUE)/sum(Weight,na.rm=TRUE),
+                     sum(Weight,na.rm=TRUE)
+)
+
+
+SurveyAverage<-ddply(SurveySummary, 
+                     .(Characteristic,Program),
                      .fun=mutate,
                      Average=sum(Weight*Score,na.rm=TRUE)/sum(Weight,na.rm=TRUE)
 )
