@@ -27,8 +27,8 @@ originalwd <- getwd()
 # Reads excel sheets by name with read.xlsx2() [xlsx package]
 # and creates data tables [data.table package] with the data read.
 # Check file path names and spreadsheet names if this isn't working
-setwd("K:/Development/JointDevelopment")
-# setwd("C:/Users/Greg Sanders/Documents/Development/JointDevelopment")
+# setwd("K:/Development/JointDevelopment")
+setwd("C:/Users/Greg Sanders/Documents/Development/JointDevelopment")
 
 JSF <- data.table(read.xlsx2("./Surveys/Response MatrixJSF.xlsx", 
                              sheetName = "Sheet3"))
@@ -36,6 +36,7 @@ M777 <- data.table(read.xlsx2("./Surveys/Response MatrixM777.xlsx",
                               sheetName = "Sheet3"))
 AGS <- data.table(read.xlsx2("./Surveys/Response MatrixAGS.xlsx", 
                              sheetName = "Sheet3"))
+
 
 # write.xlsx2(JSF,"./Surveys/Response MatrixJSF.xlsx", 
 #             sheetName = "Sheet2a",append=TRUE)
@@ -71,6 +72,31 @@ SurveyWide$b <- as.numeric(as.character(SurveyWide$b))
 SurveyWide$c <- as.numeric(as.character(SurveyWide$c))
 SurveyWide$Weight <- as.numeric(as.character(SurveyWide$Weight))
 SurveyWide$CharacteristicNumber <- as.numeric(as.character(SurveyWide$CharacteristicNumber))
+
+Unchanged<-subset(SurveyWide,CharacteristicNumber>1)
+
+
+Rotate<-subset(SurveyWide,CharacteristicNumber==1)
+Rotate<-melt(Rotate,id=c("Program","CharacteristicNumber","Stakeholder","StakeholderPart","Weight"),
+             value.name="x",
+             variable.name = "CharactersticLetter")
+
+
+
+Unchanged<-dplyr::rename(Unchanged,x=a)
+Unchanged<-dplyr::rename(Unchanged,y=b)
+Unchanged<-subset(Unchanged,select=-c(c))
+
+
+SurveyRedone<-SurveyWide
+SurveyRedone<-melt.data.table(SurveyRedone, Program + 
+                        CharacteristicNumber +
+                        Stakeholder + 
+                        StakeholderPart +
+                        Weight  ~
+                        CharacteristicLetter, 
+                    value.var="Score")
+
 
 
 # CHANGE QUESTION TITLES AND LEVELS IN THESE DOCUMENTS
