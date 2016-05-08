@@ -1,4 +1,4 @@
-Program,Characteristic,StakeHolder,StakeholderPart,Weight,x,y
+Program,Characteristic,Stakeholder,StakeholderPart,Weight,x,y
 M777,1a,3443,i,0.333333333,4,NA
 M777,1a,3443,ii,0.333333333,5,NA
 M777,1a,3443,iii,0.333333333,6,NA
@@ -38,6 +38,6 @@ M777,7,4713,ii,0.5,1,4
 M777,7,4787,,1,5,3
 M777,8,3443,i,0.5,4,4
 M777,8,3443,ii,0.5,4,5
-M777,8,4713,i,0.5,4,2
+M777,8,4713,i,0.5,2,2
 M777,8,4713,ii,0.5,2,5
 M777,8,4787,,1,5,3

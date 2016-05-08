@@ -27,76 +27,25 @@ originalwd <- getwd()
 # Reads excel sheets by name with read.xlsx2() [xlsx package]
 # and creates data tables [data.table package] with the data read.
 # Check file path names and spreadsheet names if this isn't working
-# setwd("K:/Development/JointDevelopment")
-setwd("C:/Users/Greg Sanders/Documents/Development/JointDevelopment")
+setwd("K:/Development/JointDevelopment")
+# setwd("C:/Users/Greg Sanders/Documents/Development/JointDevelopment")
 
-JSF <- data.table(read.xlsx2("./Surveys/Response MatrixJSF.xlsx", 
-                             sheetName = "Sheet3"))
-M777 <- data.table(read.xlsx2("./Surveys/Response MatrixM777.xlsx", 
-                              sheetName = "Sheet3"))
-AGS <- data.table(read.xlsx2("./Surveys/Response MatrixAGS.xlsx", 
-                             sheetName = "Sheet3"))
+# JSF <- data.table(read.xlsx2("./Surveys/Response MatrixJSF.xlsx", 
+#                              sheetName = "Sheet3"))
+# M777 <- data.table(read.xlsx2("./Surveys/Response MatrixM777.xlsx", 
+#                               sheetName = "Sheet3"))
+# AGS <- data.table(read.xlsx2("./Surveys/Response MatrixAGS.xlsx", 
+#                              sheetName = "Sheet3"))
 
-
-# write.xlsx2(JSF,"./Surveys/Response MatrixJSF.xlsx", 
-#             sheetName = "Sheet2a",append=TRUE)
-# write.xlsx2(M777,"./Surveys/Response MatrixM777.xlsx", 
-#             sheetName = "Sheet2a",append=TRUE)
-# write.xlsx2(AGS,"./Surveys/Response MatrixAGS.xlsx", 
-#             sheetName = "Sheet2a",append=TRUE)
-
-# fixes numeric data that got imported as factors 
-# ignore the NA warning, NAs are being correctly recognized now, not introduced
-# JSF$Score <- as.numeric(as.character(JSF$Score))
-# JSF$a <- as.numeric(as.character(JSF$a))
-# JSF$b <- as.numeric(as.character(JSF$b))
-# JSF$c <- as.numeric(as.character(JSF$c))
-# JSF$Weight <- as.numeric(as.character(JSF$Weight))
-# M777$a <- as.numeric(as.character(M777$a))
-# M777$b <- as.numeric(as.character(M777$b))
-# M777$c <- as.numeric(as.character(M777$c))
-# # M777$Score <- as.numeric(as.character(M777$Score))
-# M777$Weight <- as.numeric(as.character(M777$Weight))
-# SurveyWide$Score <- as.numeric(as.character(SurveyWide$Score))
+JSF <- data.table(read.csv("./Surveys/Survey_JSF_Anonymous.csv"))
+M777 <- data.table(read.csv("./Surveys/Survey_M777_Anonymous.csv"))
+AGS <- data.table(read.csv("./Surveys/Survey_AGS_Anonymous.csv"))
 
 
-# MERGE DATA:
-# tags each dataset with the program it comes from, then merges datasets 
-# JSF <- mutate(JSF, Program = "JSF")
-# M777 <- mutate(M777, Program = "M777")
-# AGS <- mutate(AGS, Program = "AGS")
-
-SurveyWide <- rbind(JSF, M777, AGS, fill = TRUE)
-SurveyWide$a <- as.numeric(as.character(SurveyWide$a))
-SurveyWide$b <- as.numeric(as.character(SurveyWide$b))
-SurveyWide$c <- as.numeric(as.character(SurveyWide$c))
-SurveyWide$Weight <- as.numeric(as.character(SurveyWide$Weight))
-SurveyWide$CharacteristicNumber <- as.numeric(as.character(SurveyWide$CharacteristicNumber))
-
-Unchanged<-subset(SurveyWide,CharacteristicNumber>1)
-
-
-Rotate<-subset(SurveyWide,CharacteristicNumber==1)
-Rotate<-melt(Rotate,id=c("Program","CharacteristicNumber","Stakeholder","StakeholderPart","Weight"),
-             value.name="x",
-             variable.name = "CharactersticLetter")
-
-
-
-Unchanged<-dplyr::rename(Unchanged,x=a)
-Unchanged<-dplyr::rename(Unchanged,y=b)
-Unchanged<-subset(Unchanged,select=-c(c))
-
-
-SurveyRedone<-SurveyWide
-SurveyRedone<-melt.data.table(SurveyRedone, Program + 
-                        CharacteristicNumber +
-                        Stakeholder + 
-                        StakeholderPart +
-                        Weight  ~
-                        CharacteristicLetter, 
-                    value.var="Score")
-
+SurveyData <- rbind(JSF, M777, AGS, fill = TRUE)
+SurveyData$x <- as.numeric(as.character(SurveyData$x))
+SurveyData$y <- as.numeric(as.character(SurveyData$y))
+SurveyData$Weight <- as.numeric(as.character(SurveyData$Weight))
 
 
 # CHANGE QUESTION TITLES AND LEVELS IN THESE DOCUMENTS
@@ -108,31 +57,25 @@ SurveyLevels$Level <- gsub("\\\\n","\n",SurveyLevels$Level)
 SurveyLevels$LevelEnds <- gsub("\\\\n","\n",SurveyLevels$LevelEnds)
 questions$SubTitle <- gsub("\\\\n","\n",questions$SubTitle)
 
-# SurveyRedone<-SurveyWide
-# SurveyRedone$CharacteristicNumber<-substring(SurveyRedone$Characteristic,1,1)
-# SurveyRedone$CharacteristicLetter<-substring(SurveyRedone$Characteristic,2,2)
-# SurveyRedone$CharacteristicLetter[SurveyRedone$CharacteristicLetter==""]<-"a"
-# SurveyRedone<-dcast(SurveyRedone, Program + CharacteristicNumber + Stakeholder + StakeholderPart + Weight  ~ CharacteristicLetter, value.var="Score")
-#  write.xlsx2(subset(SurveyRedone,Program="JSF"),"./Surveys/Response MatrixJSF.xlsx", 
-#                              sheetName = "Sheet3",append=TRUE)
-#  write.xlsx2(subset(SurveyRedone,Program="M777"),"./Surveys/Response MatrixM777.xlsx", 
-#                               sheetName = "Sheet3",append=TRUE)
-# write.xlsx2(subset(SurveyRedone,Program="AGS"),"./Surveys/Response MatrixAGS.xlsx", 
-#                              sheetName = "Sheet3",append=TRUE)
 ################################################################################
 #     PREPARE TO CREATE GRAPHS
 ################################################################################
+# 
+# SurveySummary<-melt.data.table(SurveyData
+#                 ,id.vars=c("Program","CharacteristicNumber","Stakeholder","StakeholderPart","Weight")
+#                 ,variable.name = "CharacteristicLetter"
+#                 ,value.name="Score")
+# 
+# SurveySummary$CharacteristicLetter[SurveySummary$CharacteristicNumber %in% c(2,4,5,6)]<-NA
+# 
+# SurveySummary$Characteristic<-paste(SurveySummary$CharacteristicNumber,ifelse(is.na(SurveySummary$CharacteristicLetter)
+#                                                                               ,""
+#                                                                               ,as.character(SurveySummary$CharacteristicLetter)),sep="")
 
-SurveySummary<-melt.data.table(SurveyWide
-                ,id.vars=c("Program","CharacteristicNumber","Stakeholder","StakeholderPart","Weight")
-                ,variable.name = "CharacteristicLetter"
-                ,value.name="Score")
 
-SurveySummary$CharacteristicLetter[SurveySummary$CharacteristicNumber %in% c(2,4,5,6)]<-NA
+SurveySummary<-subset(SurveyData,!Characteristic %in% c("3","7","8"),select=-c(y))
+SurveySummary<-dplyr::rename(SurveySummary,Score=x)
 
-SurveySummary$Characteristic<-paste(SurveySummary$CharacteristicNumber,ifelse(is.na(SurveySummary$CharacteristicLetter)
-                                                                              ,""
-                                                                              ,as.character(SurveySummary$CharacteristicLetter)),sep="")
 
 SurveySummary<-ddply(SurveySummary, 
                      .(Characteristic,Score,Program),
@@ -172,7 +115,7 @@ SurveyLevels$CharacteristicLetter<-substring(SurveyLevels$Characteristic,2,2)
 SurveyLevels$CharacteristicLetter[SurveyLevels$CharacteristicLetter==""]<-NA
 
 
-questions
+# questions
 SurveySummary<-join(SurveySummary,questions,by="Characteristic")
 
 SurveyAverage<-ddply(SurveySummary, 
@@ -193,7 +136,6 @@ SurveySummary[order(SurveySummary$Program,SurveySummary$Characteristic,SurveySum
 SurveyLevels[order(SurveyLevels$Characteristic,SurveyLevels$Score),]
 
 # questions <- dist(SurveySummary$Characteristic)
-questionsNumber <- unique(SurveySummary$CharacteristicNumber)
 
 
 
@@ -269,14 +211,14 @@ maxheight <- max(weightsum$Weight)
 
 for(i in c(1,2,4,5,6)){
     
-    oneQdata <- filter(SurveySummary, CharacteristicNumber == questionsNumber[i])
-    oneQlabels <- filter(SurveyLevels, CharacteristicNumber == questionsNumber[i])
-    oneQaverage <- filter(SurveyAverage, CharacteristicNumber == questionsNumber[i])
+    oneQdata <- filter(SurveySummary, CharacteristicNumber == i)
+    oneQlabels <- filter(SurveyLevels, CharacteristicNumber == i)
+    oneQaverage <- filter(SurveyAverage, CharacteristicNumber == i)
     
     if(any(is.na(oneQdata$CharacteristicLetter))){
         ggplot(oneQdata, aes(x=Score, y= Percent,  fill=Program, color=Program)) + # y = Weight,
             geom_area(alpha=0.5, position = "identity") +#stat = "identity"
-            geom_vline(data=oneQaverage, aes(xintercept=Average, color = Program))+
+            geom_vline(data=oneQaverage, aes(xintercept=Average, color = Program),size=1,linetype="dashed")+#
             labs(y= "Percent of Responses",
                  x=gsub("\n"," ",filter(questions, substring(questions$Characteristic,1,1)== i)$SubTitle)) + #, x= "Score") + #, x= "Score"
             #facet_grid(Program ~ .) +
@@ -318,7 +260,7 @@ for(i in c(1,2,4,5,6)){
         
         ggplot(oneQdata, aes(x=Score, y = Percent, fill = Program, color=Program)) +
             geom_area(alpha=0.5, position = "identity") +
-            geom_vline(data=oneQaverage, aes(xintercept=Average, color = Program))+
+            geom_vline(data=oneQaverage, aes(xintercept=Average, color = Program),  size=1,linetype="dashed")+#linetype="dashed" position="dodge",
             labs(y= "Percent of Responses") + #, x= "Score"
             scale_x_continuous(breaks=c(1:nrow(oneQlabels)),
                                labels=paste(oneQlabels$Score,
@@ -352,7 +294,7 @@ for(i in c(1,2,4,5,6)){
     }
     # CHANGE SAVE LOCATION HERE
     filepath <- paste("./FinalGraphs/",
-                      "q",questionsNumber[i],".png",sep = "")
+                      "q",i,".png",sep = "")
     
     graphwidth<-2+1.5*length(unique(oneQdata$CharacteristicLetter))
     # CHANGE GRAPH SIZE AND RESOLUTION HERE            
@@ -363,13 +305,14 @@ for(i in c(1,2,4,5,6)){
 
 
 
-# SurveyWide<-ddply(SurveyWide, 
+# SurveyData<-ddply(SurveyData, 
 #                      .(Characteristic,Program),
 #                      .fun=mutate,
 #                      Percent=Weight/sum(Weight,na.rm=TRUE) #JSF has some missing responses
 # )
 
-SurveySumcheck<-ddply(SurveyWide, 
+SurveyData$CharacteristicNumber<-substring(SurveyData$Characteristic,1,1)
+SurveySumcheck<-ddply(SurveyData, 
                       .(CharacteristicNumber,Program,Stakeholder),
                       .fun=summarise,
                       Weight=sum(Weight,na.rm = TRUE)
@@ -380,14 +323,13 @@ subset(SurveySumcheck,is.na(Weight)|abs(Weight-1)>0.02)
 
 for(i in c(3,7,8)){
     
-    oneQdata <- filter(SurveyWide, CharacteristicNumber == i )
-    oneQdata<-dplyr::rename(oneQdata, ScoreA=a)
-    oneQdata<-dplyr::rename(oneQdata, ScoreB=b)
-    oneQdata<-subset(oneQdata,select=-c(c))
+    oneQdata <- filter(SurveyData, CharacteristicNumber == i )
+    oneQdata<-dplyr::rename(oneQdata, ScoreX=x)
+    oneQdata<-dplyr::rename(oneQdata, ScoreY=y)
     oneQdata<-oneQdata[complete.cases(oneQdata),]
     
     oneQdata<-ddply(oneQdata, 
-                    .(CharacteristicNumber,ScoreA,ScoreB,Program),
+                    .(CharacteristicNumber,ScoreX,ScoreY,Program),
                     .fun=summarise,
                     Weight=sum(Weight)
     )
@@ -404,7 +346,7 @@ for(i in c(3,7,8)){
     
     
     
-    ggplot(oneQdata, aes(x=ScoreA, y = ScoreB, size = Percent, color=Program)) +
+    ggplot(oneQdata, aes(x=ScoreX, y = ScoreY, size = Percent, color=Program)) +
         geom_point() +
         scale_size_area(labels = percent_format())+
         labs(x= gsub("\n"," ",filter(questions, substring(questions$Characteristic,1,1) == i  &
@@ -656,3 +598,81 @@ setwd(originalwd)
 #       scale_x_continuous(breaks =c(1,2,3,4,5,6)) +
 #       scale_fill_brewer(palette = "Set2") +
 #       ggtitle("Ratings by question and program")
+
+
+
+# write.xlsx2(JSF,"./Surveys/Response MatrixJSF.xlsx", 
+#             sheetName = "Sheet2a",append=TRUE)
+# write.xlsx2(M777,"./Surveys/Response MatrixM777.xlsx", 
+#             sheetName = "Sheet2a",append=TRUE)
+# write.xlsx2(AGS,"./Surveys/Response MatrixAGS.xlsx", 
+#             sheetName = "Sheet2a",append=TRUE)
+
+# fixes numeric data that got imported as factors 
+# ignore the NA warning, NAs are being correctly recognized now, not introduced
+# JSF$Score <- as.numeric(as.character(JSF$Score))
+# JSF$a <- as.numeric(as.character(JSF$a))
+# JSF$b <- as.numeric(as.character(JSF$b))
+# JSF$c <- as.numeric(as.character(JSF$c))
+# JSF$Weight <- as.numeric(as.character(JSF$Weight))
+# M777$a <- as.numeric(as.character(M777$a))
+# M777$b <- as.numeric(as.character(M777$b))
+# M777$c <- as.numeric(as.character(M777$c))
+# # M777$Score <- as.numeric(as.character(M777$Score))
+# M777$Weight <- as.numeric(as.character(M777$Weight))
+# SurveyData$Score <- as.numeric(as.character(SurveyData$Score))
+
+
+# MERGE DATA:
+# tags each dataset with the program it comes from, then merges datasets 
+# JSF <- mutate(JSF, Program = "JSF")
+# M777 <- mutate(M777, Program = "M777")
+# AGS <- mutate(AGS, Program = "AGS")
+# SurveyData$CharacteristicNumber <- as.numeric(as.character(SurveyData$CharacteristicNumber))
+
+# Unchanged<-subset(SurveyData,CharacteristicNumber>1)
+# 
+# 
+# Rotate<-subset(SurveyData,CharacteristicNumber==1)
+# Rotate<-melt(Rotate,id=c("Program","CharacteristicNumber","Stakeholder","StakeholderPart","Weight"),
+#              value.name="x",
+#              variable.name = "CharactersticLetter")
+# Rotate$Characteristic<-paste(Rotate$CharacteristicNumber,Rotate$CharactersticLetter,sep="")
+# Rotate<-subset(Rotate,select=-c(CharacteristicNumber,CharactersticLetter))
+# Rotate<-ddply(Rotate,.(Characteristic,Program,Stakeholder,x),summarise,Weight=sum(Weight))
+# Rotate$StakeholderPart<-NA
+# Rotate$y<-NA
+
+# Unchanged<-dplyr::rename(Unchanged,x=a)
+# Unchanged<-dplyr::rename(Unchanged,y=b)
+# Unchanged<-dplyr::rename(Unchanged,Characteristic=CharacteristicNumber)
+# Unchanged<-subset(Unchanged,select=-c(c))
+# 
+# Recombined<-rbind(Rotate,Unchanged)
+# SurveyRedone<-SurveyData
+# SurveyRedone<-melt.data.table(SurveyRedone, Program + 
+#                         CharacteristicNumber +
+#                         Stakeholder + 
+#                         StakeholderPart +
+#                         Weight  ~
+#                         CharacteristicLetter, 
+#                     value.var="Score")
+# Recombined<-subset(Recombined,select=-c(Stakeholder))
+# Recombined$ProgramStakeHolder<-paste(Recombined$Program,Recombined$Stakeholder,sep="-")
+# Recombined$ProgramStakeHolder<-factor(Recombined$ProgramStakeHolder, levels=Stakeholders$name,labels=Stakeholders$number)
+# Recombined<-dplyr::rename(Recombined,StakeHolder=ProgramStakeHolder)
+# 
+# Stakeholders<-data.frame(name=levels(Recombined$ProgramStakeHolder),
+#                          number=sample(0:9999,length(levels(Recombined$ProgramStakeHolder))))
+# Stakeholders$Number<-
+# SurveyRedone<-SurveyData
+# SurveyRedone$CharacteristicLetter[SurveyRedone$CharacteristicLetter==""]<-"a"
+# SurveyRedone<-dcast(SurveyRedone, Program + CharacteristicNumber + Stakeholder + StakeholderPart + Weight  ~ CharacteristicLetter, value.var="Score")
+# Survey
+# Recombined<-Recombined[order(Recombined$Program,Recombined$Characteristic,Recombined$StakeHolder),
+#                        c("Program","Characteristic","StakeHolder","StakeholderPart","Weight","x","y")]
+# 
+# colnames(Recombined)
+#  write.csv(subset(Recombined,Program=="JSF"),"./Surveys/Survey_JSF_Anonymous.csv")
+#  write.csv(subset(Recombined,Program=="M777"),"./Surveys/Survey_M777_Anonymous.csv")
+# write.csv(subset(Recombined,Program=="AGS"),"./Surveys/Survey_AGS_Anonymous.csv")
