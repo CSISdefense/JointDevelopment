@@ -40,9 +40,11 @@ setwd("K:/Development/JointDevelopment")
 JSF <- data.table(read.csv("./Surveys/Survey_JSF_Anonymous.csv"))
 M777 <- data.table(read.csv("./Surveys/Survey_M777_Anonymous.csv"))
 AGS <- data.table(read.csv("./Surveys/Survey_AGS_Anonymous.csv"))
+MEADS <- data.table(read.csv("./Surveys/Survey_MEADS_Anonymous.csv"))
+SM3 <- data.table(read.csv("./Surveys/Survey_SM3_Anonymous.csv"))
+A400m <- data.table(read.csv("./Surveys/Survey_A400m_Anonymous.csv"))
 
-
-SurveyData <- rbind(JSF, M777, AGS, fill = TRUE)
+SurveyData <- rbind(JSF, M777, AGS, MEADS, SM3, A400m, fill = TRUE)
 SurveyData$x <- as.numeric(as.character(SurveyData$x))
 SurveyData$y <- as.numeric(as.character(SurveyData$y))
 SurveyData$Weight <- as.numeric(as.character(SurveyData$Weight))
@@ -313,7 +315,7 @@ for(i in c(1,2,4,5,6)){
 
 SurveyData$CharacteristicNumber<-substring(SurveyData$Characteristic,1,1)
 SurveySumcheck<-ddply(SurveyData, 
-                      .(CharacteristicNumber,Program,Stakeholder),
+                      .(Characteristic,Program,Stakeholder),
                       .fun=summarise,
                       Weight=sum(Weight,na.rm = TRUE)
 )
@@ -326,6 +328,7 @@ for(i in c(3,7,8)){
     oneQdata <- filter(SurveyData, CharacteristicNumber == i )
     oneQdata<-dplyr::rename(oneQdata, ScoreX=x)
     oneQdata<-dplyr::rename(oneQdata, ScoreY=y)
+    oneQdata$StakeholderPart[is.na(oneQdata$StakeholderPart)]<-''
     oneQdata<-oneQdata[complete.cases(oneQdata),]
     
     oneQdata<-ddply(oneQdata, 
@@ -359,7 +362,7 @@ for(i in c(3,7,8)){
                            labels=  paste(oneQlabelsA$Score,
                                           ifelse(oneQlabelsA$LevelEnds=="","",
                                                  paste("\n",oneQlabelsA$LevelEnds,sep="")),sep=""))+#limits = c(0.5,6.5), breaks =c(1,2,3,4,5,6)) +
-        facet_grid(. ~ Program) +
+        facet_wrap( ~ Program) +
         scale_y_continuous(breaks=c(1:nrow(oneQlabelsB)),
                            limits = c(0.5,6.5),
                            labels=paste(oneQlabelsB$Score,
@@ -658,19 +661,19 @@ setwd(originalwd)
 #                         CharacteristicLetter, 
 #                     value.var="Score")
 # Recombined<-subset(Recombined,select=-c(Stakeholder))
-# Recombined$ProgramStakeHolder<-paste(Recombined$Program,Recombined$Stakeholder,sep="-")
-# Recombined$ProgramStakeHolder<-factor(Recombined$ProgramStakeHolder, levels=Stakeholders$name,labels=Stakeholders$number)
-# Recombined<-dplyr::rename(Recombined,StakeHolder=ProgramStakeHolder)
+# Recombined$ProgramStakeholder<-paste(Recombined$Program,Recombined$Stakeholder,sep="-")
+# Recombined$ProgramStakeholder<-factor(Recombined$ProgramStakeholder, levels=Stakeholders$name,labels=Stakeholders$number)
+# Recombined<-dplyr::rename(Recombined,Stakeholder=ProgramStakeholder)
 # 
-# Stakeholders<-data.frame(name=levels(Recombined$ProgramStakeHolder),
-#                          number=sample(0:9999,length(levels(Recombined$ProgramStakeHolder))))
+# Stakeholders<-data.frame(name=levels(Recombined$ProgramStakeholder),
+#                          number=sample(0:9999,length(levels(Recombined$ProgramStakeholder))))
 # Stakeholders$Number<-
 # SurveyRedone<-SurveyData
 # SurveyRedone$CharacteristicLetter[SurveyRedone$CharacteristicLetter==""]<-"a"
 # SurveyRedone<-dcast(SurveyRedone, Program + CharacteristicNumber + Stakeholder + StakeholderPart + Weight  ~ CharacteristicLetter, value.var="Score")
 # Survey
-# Recombined<-Recombined[order(Recombined$Program,Recombined$Characteristic,Recombined$StakeHolder),
-#                        c("Program","Characteristic","StakeHolder","StakeholderPart","Weight","x","y")]
+# Recombined<-Recombined[order(Recombined$Program,Recombined$Characteristic,Recombined$Stakeholder),
+#                        c("Program","Characteristic","Stakeholder","StakeholderPart","Weight","x","y")]
 # 
 # colnames(Recombined)
 #  write.csv(subset(Recombined,Program=="JSF"),"./Surveys/Survey_JSF_Anonymous.csv")
