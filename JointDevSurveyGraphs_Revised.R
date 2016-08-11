@@ -27,8 +27,8 @@ originalwd <- getwd()
 # Reads excel sheets by name with read.xlsx2() [xlsx package]
 # and creates data tables [data.table package] with the data read.
 # Check file path names and spreadsheet names if this isn't working
-setwd("K:/Development/JointDevelopment")
-# setwd("C:/Users/Greg Sanders/Documents/Development/JointDevelopment")
+# setwd("K:/Development/JointDevelopment")
+setwd("D:/Users/Greg Sanders/Documents/Development/JointDevelopment")
 
 # JSF <- data.table(read.xlsx2("./Surveys/Response MatrixJSF.xlsx", 
 #                              sheetName = "Sheet3"))
@@ -120,19 +120,35 @@ SurveyLevels$CharacteristicLetter[SurveyLevels$CharacteristicLetter==""]<-NA
 # questions
 SurveySummary<-join(SurveySummary,questions,by="Characteristic")
 
-SurveyAverage<-ddply(SurveySummary, 
+SurveyAverage<-ddply(SurveySummary,
                      .(Characteristic,Program),
                      .fun=summarise,
                      Average=sum(Weight*Score,na.rm=TRUE)/sum(Weight,na.rm=TRUE),
                      sum(Weight,na.rm=TRUE)
 )
+#Manually jittering average matches to enable them to be displayed.
+SurveyAverage$Round<-round(SurveyAverage$Average,1)
+SurveyDuplicates<-plyr::count(SurveyAverage,c("Characteristic","Round"))
+SurveyDuplicates$Adjustment<-(SurveyDuplicates$freq-1)/-2/10
+SurveyAverage<-plyr::join(SurveyAverage,SurveyDuplicates)
+SurveyAverage<-SurveyAverage[order(SurveyAverage$Average),]
+SurveyAverage$AvgAdjusted<-SurveyAverage$Average
+for(i in 1:nrow(SurveyAverage)){
+  if(SurveyAverage$freq[i]>1){
+    SurveyAverage$AvgAdjusted[i]<-SurveyAverage$Round[i]+
+      SurveyDuplicates$Adjustment[SurveyDuplicates$Characteristic==SurveyAverage$Characteristic[i]&
+                                    SurveyDuplicates$Round==SurveyAverage$Round[i]]
+    SurveyDuplicates$Adjustment[SurveyDuplicates$Characteristic==SurveyAverage$Characteristic[i]&
+                                  SurveyDuplicates$Round==SurveyAverage$Round[i]]<-
+      SurveyDuplicates$Adjustment[SurveyDuplicates$Characteristic==SurveyAverage$Characteristic[i]&
+                                    SurveyDuplicates$Round==SurveyAverage$Round[i]]+0.1
+  }
+}
+                        
 
-
-SurveyAverage<-ddply(SurveySummary, 
-                     .(Characteristic,Program),
-                     .fun=mutate,
-                     Average=sum(Weight*Score,na.rm=TRUE)/sum(Weight,na.rm=TRUE)
-)
+SurveyAverage<-plyr::join(SurveySummary,
+                    SurveyAverage)
+                     
 
 SurveySummary[order(SurveySummary$Program,SurveySummary$Characteristic,SurveySummary$Score),]
 SurveyLevels[order(SurveyLevels$Characteristic,SurveyLevels$Score),]
@@ -220,8 +236,12 @@ for(i in c(1,2,4,5,6)){
     if(any(is.na(oneQdata$CharacteristicLetter))){
         ggplot(oneQdata, aes(x=Score, y= Percent,  fill=Program, color=Program)) + # y = Weight,
             geom_area(alpha=0.5, position = "identity") +#stat = "identity"
-            geom_vline(data=oneQaverage, aes(xintercept=Average, color = Program),size=1,linetype="dashed")+#
+            geom_vline(data=oneQaverage, 
+                       aes(xintercept=AvgAdjusted, color = Program),
+                       size=1,
+                       linetype="dashed")+#
             labs(y= "Percent of Responses",
+                 
                  x=gsub("\n"," ",filter(questions, substring(questions$Characteristic,1,1)== i)$SubTitle)) + #, x= "Score") + #, x= "Score"
             #facet_grid(Program ~ .) +
             scale_x_continuous( breaks=c(1:nrow(oneQlabels)),
@@ -247,7 +267,7 @@ for(i in c(1,2,4,5,6)){
                   strip.background = element_blank(),
                   legend.text=element_text(size=8),
                   plot.margin=unit(c(0,0.25,0,0),"cm"),
-                  legend.margin=unit(-0.5,"cm"),
+                  legend.margin=unit(0,"cm"),
                   legend.key.size=unit(0.25,"cm"),
                   legend.position="right")
     }
@@ -256,13 +276,15 @@ for(i in c(1,2,4,5,6)){
         #1-6 for a, 7-12 for b, and 13-18 for c
         oneQdata$Score[oneQdata$CharacteristicLetter=="b"]<-oneQdata$Score[oneQdata$CharacteristicLetter=="b"]+6
         oneQdata$Score[oneQdata$CharacteristicLetter=="c"]<-oneQdata$Score[oneQdata$CharacteristicLetter=="c"]+12
-        
-        oneQaverage$Average[oneQaverage$CharacteristicLetter=="b"]<-oneQaverage$Average[oneQaverage$CharacteristicLetter=="b"]+6
-        oneQaverage$Average[oneQaverage$CharacteristicLetter=="c"]<-oneQaverage$Average[oneQaverage$CharacteristicLetter=="c"]+12
-        
+        # browser()
+        oneQaverage$AvgAdjusted[oneQaverage$CharacteristicLetter=="b"]<-oneQaverage$AvgAdjusted[oneQaverage$CharacteristicLetter=="b"]+6
+        oneQaverage$AvgAdjusted[oneQaverage$CharacteristicLetter=="c"]<-oneQaverage$AvgAdjusted[oneQaverage$CharacteristicLetter=="c"]+12
         ggplot(oneQdata, aes(x=Score, y = Percent, fill = Program, color=Program)) +
             geom_area(alpha=0.5, position = "identity") +
-            geom_vline(data=oneQaverage, aes(xintercept=Average, color = Program),  size=1,linetype="dashed")+#linetype="dashed" position="dodge",
+            geom_vline(
+              data=oneQaverage, aes(xintercept=AvgAdjusted, color = Program), 
+              size=1,
+              linetype="dashed")+#linetype="dashed" position="dodge",
             labs(y= "Percent of Responses") + #, x= "Score"
             scale_x_continuous(breaks=c(1:nrow(oneQlabels)),
                                labels=paste(oneQlabels$Score,
@@ -290,7 +312,7 @@ for(i in c(1,2,4,5,6)){
                   legend.text=element_text(size=8),
                   plot.margin=unit(c(0,0.75,-0.1,0),"cm"),
                   # panel.margin=unit(0.5,"cm"),
-                  legend.margin=unit(-0.4,"cm"),
+                  legend.margin=unit(0,"cm"),
                   legend.key.size=unit(0.25,"cm"),
                   legend.position="bottom")
     }
@@ -300,7 +322,7 @@ for(i in c(1,2,4,5,6)){
     
     graphwidth<-2+1.5*length(unique(oneQdata$CharacteristicLetter))
     # CHANGE GRAPH SIZE AND RESOLUTION HERE            
-    ggsave(filepath, width = graphwidth, height = 2.25, unit="in", dpi = 300)      
+    ggsave(filepath, width = graphwidth, height = 2.25, unit="in", dpi = 450)      
 }
 
 
@@ -431,7 +453,7 @@ for(i in c(3,7,8)){
         )+
         # geom_abline()
         theme(axis.title.x=element_text(size=8),
-              axis.title.y=element_text(size=8,hjust=0.65)
+              axis.title.y=element_text(size=7,hjust=0.65)
               # plot.title=element_text(hjust=0)
         )+
         theme(aspect.ratio = 1)+
@@ -441,9 +463,9 @@ for(i in c(3,7,8)){
             # axis.title.y=element_blank(),
             strip.text = element_text(size=7), 
             legend.text=element_text(size=8),
-            legend.margin=unit(-0.5,"cm"),
+            legend.margin=unit(0,"cm"),
             plot.margin=unit(c(0,0,0,0),"cm"),
-            panel.margin=unit(0.1,"in"),
+            panel.margin=unit(0.5,"cm"),
             legend.key.size=unit(0.1,"cm"),
             legend.position="right")
     
@@ -453,7 +475,7 @@ for(i in c(3,7,8)){
     
     graphwidth<-6.5
     # CHANGE GRAPH SIZE AND RESOLUTION HERE            
-    ggsave(filepath, width = graphwidth, height = 3, unit="in", dpi = 300)      
+    ggsave(filepath, width = graphwidth, height = 3.5, unit="in", dpi = 450)      
 }
 
 
