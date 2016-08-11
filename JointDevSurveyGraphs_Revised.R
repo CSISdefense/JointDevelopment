@@ -75,7 +75,9 @@ questions$SubTitle <- gsub("\\\\n","\n",questions$SubTitle)
 #                                                                               ,as.character(SurveySummary$CharacteristicLetter)),sep="")
 
 
-SurveySummary<-subset(SurveyData,!Characteristic %in% c("3","7","8"),select=-c(y))
+SurveySummary<-subset(SurveyData,!Characteristic %in% c("3","7","8")&
+                        !is.na(x)
+                      ,select=-c(y))
 SurveySummary<-dplyr::rename(SurveySummary,Score=x)
 
 
