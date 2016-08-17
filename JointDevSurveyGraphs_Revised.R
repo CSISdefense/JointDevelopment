@@ -27,8 +27,8 @@ originalwd <- getwd()
 # Reads excel sheets by name with read.xlsx2() [xlsx package]
 # and creates data tables [data.table package] with the data read.
 # Check file path names and spreadsheet names if this isn't working
-# setwd("K:/Development/JointDevelopment")
-setwd("D:/Users/Greg Sanders/Documents/Development/JointDevelopment")
+setwd("K:/Development/JointDevelopment")
+# setwd("D:/Users/Greg Sanders/Documents/Development/JointDevelopment")
 
 # JSF <- data.table(read.xlsx2("./Surveys/Response MatrixJSF.xlsx", 
 #                              sheetName = "Sheet3"))
